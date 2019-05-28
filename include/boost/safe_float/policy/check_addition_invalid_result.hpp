@@ -26,7 +26,7 @@ public:
     }
     virtual bool post_addition_check(const FP& rhs){
 #ifndef FENV_AVAILABLE
-        return !isnan(rhs);
+        return !std::isnan(rhs);
 #else
         return ! std::fetestexcept(FE_INVALID);
 #endif

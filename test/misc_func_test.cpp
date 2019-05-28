@@ -36,12 +36,11 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_istream, FPT, test_types){
     safe_float<FPT> sf;
 
     std::stringstream ssfp;
-    ssfp.precision(std::numeric_limits<FPT>::digits10);
+    ssfp.precision(std::numeric_limits<FPT>::max_digits10);
     ssfp << f;
     ssfp >> sf;
 
     BOOST_CHECK_EQUAL(sf.get_stored_value(), f);
-    BOOST_ERROR("THIS TEST IS FAILING BECAUSE INFORMATION IS LOST IN THE STREAM, CHECK THE STREAM");
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_ostream, FPT, test_types){

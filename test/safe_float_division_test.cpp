@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_division_throws_on_overflow, FPT, test
     FPT a = std::numeric_limits<FPT>::max();
     FPT b = std::numeric_limits<FPT>::min();
     // check FPT overflows to inf after add
-    BOOST_CHECK(isinf(a/b));
+    BOOST_CHECK(std::isinf(a/b));
 
     // construct safe_float version of the same two numbers
     safe_float<FPT, policy::check_division_overflow> c(std::numeric_limits<FPT>::max());
@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_division_throws_on_overflow, FPT, test
     FPT e = std::numeric_limits<FPT>::lowest();
     FPT f = std::numeric_limits<FPT>::min();
     // check FPT overflows to inf after add
-    BOOST_CHECK(isinf(e/f));
+    BOOST_CHECK(std::isinf(e/f));
 
     // construct safe_float version of the same two numbers
     safe_float<FPT, policy::check_division_overflow> g(std::numeric_limits<FPT>::lowest());
@@ -61,14 +61,14 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_division_throws_on_overflow, FPT, test
 BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_division_inexact_rounding, FPT, test_types){
     // define two FPT numbers suppose to produce inexact rounding
     FPT a = 1;
-    FPT b = pow(3, std::numeric_limits<FPT>::digits);
+    FPT b = 1.815170982922064060217925973717001397744752466678619384765625L;
 
     // check multiplying and dividing do not give the same number back.
     BOOST_CHECK((a/b)*b != a);
 
     // construct safe_float version of the same two numbers
-    safe_float<FPT, policy::check_division_inexact> c(1);
-    safe_float<FPT, policy::check_division_inexact> d(3);
+    safe_float<FPT, policy::check_division_inexact> c(a);
+    safe_float<FPT, policy::check_division_inexact> d(b);
 
     // check the division throws
     BOOST_CHECK_THROW(c/d, std::exception);
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_division_invalid_result, FPT, test_typ
     FPT b = std::numeric_limits<FPT>::infinity();
 
     // check adding produced NaN
-    BOOST_CHECK(isnan(a/b));
+    BOOST_CHECK(std::isnan(a/b));
 
     // construct safe_float version of the same two numbers
     safe_float<FPT, policy::check_division_invalid_result> c(std::numeric_limits<FPT>::infinity());

@@ -36,11 +36,14 @@ CMakeCache.txt
 CMakeFiles
 CMakeScripts
 CTestTestfile.cmake
+cmake-build-debug
+cmake-build-release
 Debug
 Testing
 cmake_install.cmake
 safefloat.build
 safefloat.xcodeproj
+.idea
 
 #BoostBook generated files
 doc/html/safe_float/

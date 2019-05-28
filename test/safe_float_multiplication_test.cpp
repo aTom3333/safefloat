@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_multiplication_throws_on_overflow, FPT
     FPT a = std::numeric_limits<FPT>::max();
     FPT b = 2;
     // check FPT overflows to inf after add
-    BOOST_CHECK(isinf(a*b));
+    BOOST_CHECK(std::isinf(a*b));
 
     // construct safe_float version of the same two numbers
     safe_float<FPT, policy::check_multiplication_overflow> c(std::numeric_limits<FPT>::max());
@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_multiplication_throws_on_overflow, FPT
     FPT e = std::numeric_limits<FPT>::lowest();
     FPT f = 2;
     // check FPT overflows to inf after add
-    BOOST_CHECK(isinf(e*f));
+    BOOST_CHECK(std::isinf(e*f));
 
     // construct safe_float version of the same two numbers
     safe_float<FPT, policy::check_multiplication_overflow> g(std::numeric_limits<FPT>::lowest());
@@ -59,11 +59,23 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_multiplication_throws_on_overflow, FPT
 
 BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_multiplication_inexact_rounding, FPT, test_types){
     // define two FPT numbers suppose to produce inexact rounding
-    FPT a = 2 * (pow(2, std::numeric_limits<FPT>::digits)-1);
-    FPT b = pow(2, std::numeric_limits<FPT>::digits)-1;
+    FPT a, b;
+    
+    if(std::is_same<FPT, float>()) {
+        a = 1.64005529880523681640625f;
+        b = 3.1559422016143798828125f;
+    } else if(std::is_same<FPT, double>()){
+        a = 1.200941392190915113502569511183537542819976806640625;
+        b = 1.7035518365272823704259508303948678076267242431640625;
+    } else if(std::is_same<FPT, long double>()) {
+        a = 1.48057361058650153290937312444697226965217851102352142333984375L;
+        b = 1.8352666822131742060432435525996197611675597727298736572265625L;
+    } else {
+        BOOST_ERROR("Test implemented only for float, double and long double");
+    }
 
     // check multiplying and dividing gives the same number back.
-    BOOST_CHECK((a*b)/b == a);
+    BOOST_CHECK((a*b)/b != a);
 
     // construct safe_float version of the same two numbers
     safe_float<FPT, policy::check_multiplication_inexact> c(a);
@@ -74,7 +86,19 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_multiplication_inexact_rounding, FPT, 
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_multiplication_underflow, FPT, test_types){
-    BOOST_ERROR("underflow test not implemented for multiplication yet");
+    // define two FPT numbers suppose to produce underflow
+    FPT a = std::numeric_limits<FPT>::min();
+    FPT b = 0.5;
+
+    // check FPT underflow to denormalized result after multiply
+    BOOST_CHECK(std::fpclassify(a*b) == FP_SUBNORMAL);
+
+    // construct safe_float version of the same two numbers
+    safe_float<FPT, policy::check_multiplication_underflow> c(a);
+    safe_float<FPT, policy::check_multiplication_underflow> d(b);
+
+    // check the multiplication throws
+    BOOST_CHECK_THROW(c*d, std::exception);
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_multiplication_invalid_result, FPT, test_types){
@@ -83,7 +107,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_multiplication_invalid_result, FPT, te
     FPT b = 0;
 
     // check adding produced NaN
-    BOOST_CHECK(isnan(a*b));
+    BOOST_CHECK(std::isnan(a*b));
 
     // construct safe_float version of the same two numbers
     safe_float<FPT, policy::check_multiplication_invalid_result> c(std::numeric_limits<FPT>::infinity());
