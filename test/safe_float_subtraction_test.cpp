@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_subtraction_throws_on_overflow, FPT, t
     FPT a = std::numeric_limits<FPT>::max();
     FPT b = std::numeric_limits<FPT>::lowest();
     // check FPT overflows to inf after subtract
-    BOOST_CHECK(isinf(a-b));
+    BOOST_CHECK(std::isinf(a-b));
 
     // construct safe_float version of the same two numbers
     safe_float<FPT, policy::check_subtraction_overflow> c(std::numeric_limits<FPT>::max());
@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_subtraction_throws_on_overflow, FPT, t
     FPT e = std::numeric_limits<FPT>::lowest();
     FPT f = std::numeric_limits<FPT>::max();
     // check FPT overflows to inf after add
-    BOOST_CHECK(isinf(e-f));
+    BOOST_CHECK(std::isinf(e-f));
 
     // construct safe_float version of the same two numbers
     safe_float<FPT, policy::check_subtraction_overflow> g(std::numeric_limits<FPT>::lowest());
@@ -76,16 +76,54 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_subtraction_inexact_rounding, FPT, tes
 BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_subtraction_underflow, FPT, test_types){
     // define two FPT numbers suppose to underflow
     FPT a, b, c;
-    if (std::is_same<FPT, double>()) {
-        a =  2.2250738585072019e-308;
-        b =  2.2250738585072014e-308;
+    if (std::is_same<FPT, float>()) {
+        a = 4.01254977e-38f;
+        b = 4.01254949e-38f;
+
+        BOOST_CHECK(std::isnormal(a));
+        BOOST_CHECK(std::isnormal(b));
+
         //check the subtraction produces an denormal result (considered underflow)
         c = a - b;
         BOOST_CHECK( std::fpclassify( c ) == FP_SUBNORMAL ) ;
 
         // construct safe_float version of the same two numbers
-        safe_float<FPT, policy::check_subtraction_underflow> d(2.2250738585072019e-308);
-        safe_float<FPT, policy::check_subtraction_underflow> e(2.2250738585072014e-308);
+        safe_float<FPT, policy::check_subtraction_underflow> d(a);
+        safe_float<FPT, policy::check_subtraction_underflow> e(b);
+
+        // check the subtraction throws
+        BOOST_CHECK_THROW(d-e, std::exception);
+    } else if (std::is_same<FPT, double>()) {
+        a =  2.2250738585072019e-308;
+        b =  2.2250738585072014e-308;
+
+        BOOST_CHECK(std::isnormal(a));
+        BOOST_CHECK(std::isnormal(b));
+
+        //check the subtraction produces an denormal result (considered underflow)
+        c = a - b;
+        BOOST_CHECK( std::fpclassify( c ) == FP_SUBNORMAL ) ;
+
+        // construct safe_float version of the same two numbers
+        safe_float<FPT, policy::check_subtraction_underflow> d(a);
+        safe_float<FPT, policy::check_subtraction_underflow> e(b);
+
+        // check the subtraction throws
+        BOOST_CHECK_THROW(d-e, std::exception);
+    } else if (std::is_same<FPT, long double>()) {
+        a = 3.40132972460942461217e-4932l;
+        b = 3.40132972460942461181e-4932l;
+
+        BOOST_CHECK(std::isnormal(a));
+        BOOST_CHECK(std::isnormal(b));
+
+        //check the subtraction produces an denormal result (considered underflow)
+        c = a - b;
+        BOOST_CHECK( std::fpclassify( c ) == FP_SUBNORMAL ) ;
+
+        // construct safe_float version of the same two numbers
+        safe_float<FPT, policy::check_subtraction_underflow> d(a);
+        safe_float<FPT, policy::check_subtraction_underflow> e(b);
 
         // check the subtraction throws
         BOOST_CHECK_THROW(d-e, std::exception);
@@ -100,7 +138,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_subtraction_invalid_result, FPT, test_
     FPT b = std::numeric_limits<FPT>::infinity();
 
     // check adding produced NaN
-    BOOST_CHECK(isnan(a-b));
+    BOOST_CHECK(std::isnan(a-b));
 
     // construct safe_float version of the same two numbers
     safe_float<FPT, policy::check_subtraction_invalid_result> c(std::numeric_limits<FPT>::infinity());
