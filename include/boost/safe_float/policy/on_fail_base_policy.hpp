@@ -12,8 +12,7 @@ namespace policy{
  */
 class on_fail_policy {
 public:
-    virtual void report_failure(const std::string& s)=0;
-    virtual ~on_fail_policy(){}
+    void report_failure(const std::string& s) {}
 };
 
 } //policy
