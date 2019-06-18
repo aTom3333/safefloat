@@ -319,6 +319,60 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_check_all_combined, FPT, test_types){
     BOOST_CHECK_THROW(e/f, std::exception);
 }
 
+BOOST_AUTO_TEST_CASE_TEMPLATE(safe_float_check_all_error_message, FPT, test_types)
+{
+    // addition overflow
+    safe_float<FPT, policy::check_all> max = std::numeric_limits<FPT>::max(); // max+max -> OV
+    try
+    {
+        max + max;
+        BOOST_ERROR("An exception is supposed to be thrown");
+    }
+    catch (std::exception& e)
+    {
+        BOOST_CHECK_EQUAL(e.what(), "Overflow to infinite on addition operation");
+    }
+    // subtraction inexact result
+    safe_float<FPT, policy::check_all> a(std::numeric_limits<FPT>::min());
+    safe_float<FPT, policy::check_all> b(pow(2, std::numeric_limits<FPT>::digits));
+    try
+    {
+        a - b;
+        BOOST_ERROR("An exception is supposed to be thrown");
+    }
+    catch (std::exception& e)
+    {
+        BOOST_CHECK_EQUAL(e.what(), "Non reversible subtraction applied");
+    }
+    // multiplication invalid result
+    safe_float<FPT, policy::check_all> c(std::numeric_limits<FPT>::infinity());
+    safe_float<FPT, policy::check_all> d(0);
+    try
+    {
+        c* d;
+        BOOST_ERROR("An exception is supposed to be thrown");
+    }
+    catch (std::exception& e)
+    {
+        BOOST_CHECK_EQUAL(e.what(), "Invalid result from arithmetic operation obtained");
+        // Fail if fenv isn't available because inexact error comes first
+    }
+    // division by zero
+    // construct safe_float producing divide by zero
+    safe_float<FPT, policy::check_all> e(1);
+    safe_float<FPT, policy::check_all> f(0);
+    // check the division throws
+    try
+    {
+        e / f;
+        BOOST_ERROR("An exception is supposed to be thrown");
+    }
+    catch (std::exception& e)
+    {
+        BOOST_CHECK_EQUAL(e.what(), "Division by zero");
+    }
+}
+
 BOOST_AUTO_TEST_SUITE_END() //check composed policies
 
 BOOST_AUTO_TEST_SUITE_END() //check policy

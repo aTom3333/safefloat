@@ -8,8 +8,7 @@ namespace policy{
 
 class on_fail_throw : public on_fail_policy {
 public:
-    void report_failure(const std::string& s) { throw std::exception();
-    }
+    void report_failure(const std::string& s) { throw std::runtime_error(s); }
 };
 
 }

@@ -56,7 +56,7 @@ BOOST_SAFE_FLOAT_EVERY_POST_CHECK(BOOST_SAFE_FLOAT_TEST_POST_CHECK_CAPACITY_TEMP
 } // namespace detection
 
 
-template<typename Fp, typename Policy>
+template<typename Fp, typename Policy, bool specialized = true>
 class policy_traits
 {
 public:
