@@ -293,6 +293,31 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_check_bothflows_combined, FPT, test_ty
         //check division underflow to zero
         BOOST_CHECK_THROW(min/max, std::exception);
 
+    } else if (std::is_same<FPT, long double>()) {
+        FPT a =  3.40132972460942461217e-4932l;
+        FPT b = -3.40132972460942461181e-4932l;
+        //check the addition produces an denormal result (considered underflow)
+        FPT c = a + b;
+        BOOST_CHECK( std::fpclassify( c ) == FP_SUBNORMAL ) ;
+
+        // construct safe_float version of the same two numbers
+        safe_float<FPT, policy::check_bothflow> d(a);
+        safe_float<FPT, policy::check_bothflow> e(b);
+        safe_float<FPT, policy::check_bothflow> ne(-b);
+
+        // check the addition throws
+        BOOST_CHECK_THROW(d+e, std::exception);
+
+        //check subtraction throws
+        BOOST_CHECK_THROW(d-ne, std::exception);
+
+        //check multiplication underflow throws
+        safe_float<FPT, policy::check_bothflow> half = 0.5;
+        BOOST_CHECK_THROW(min*half, std::exception);
+
+        //check division underflow to zero
+        BOOST_CHECK_THROW(min/max, std::exception);
+
     } else {
         BOOST_ERROR("bothflow test only implemented for float, double and long double");
     }
