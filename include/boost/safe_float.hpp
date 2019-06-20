@@ -16,6 +16,7 @@ template<class FP, template<class T> class CHECK = policy::check_all, class ERRO
 class safe_float : private CHECK<FP>, ERROR_HANDLING
 {
     FP number;
+    
     using pol = CHECK<FP>;
     using traits = policy::policy_traits<FP, CHECK<FP>>;
     pol& policy() noexcept { return static_cast<pol&>(*this); }
