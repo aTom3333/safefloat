@@ -12,7 +12,7 @@ namespace boost
 namespace safe_float
 {
 template<class FP, template<class T> class CHECK = policy::check_all, class ERROR_HANDLING = policy::on_fail_throw,
-         template<class T> class CAST = policy::cast_none>
+         template<class T> class CAST = policy::cast_from_primitive::none>
 class safe_float : private CHECK<FP>, ERROR_HANDLING
 {
     FP number;
@@ -27,7 +27,31 @@ public:
                   "First template parameter in safe_float has to be floating point data type");
 
     safe_float() : safe_float((FP)0.0f) {}
-    safe_float(FP f) { number = f; }
+
+    // Explicit constructor for FP in case the cast policy doesn't allow construction already
+    template<
+        typename OtherFP,
+        std::enable_if_t<
+            std::is_same_v<
+                FP,
+                OtherFP> && !CAST<FP>::template can_explicitly_cast_from<OtherFP> && !CAST<FP>::template can_cast_from<OtherFP>,
+            int> = 0>
+    explicit safe_float(OtherFP f) : number{f}
+    {}
+
+    // Explicit constructors available through the cast policy
+    template<typename T, std::enable_if_t<CAST<FP>::template can_explicitly_cast_from<T>, int> = 0>
+    explicit safe_float(T source)
+    {
+        policy::cast_helper<FP, CAST<FP>>::template construct_explicitly(number, source);
+    }
+
+    // Implicit constructors available through the cast policy
+    template<typename T, std::enable_if_t<CAST<FP>::template can_cast_from<T>, int> = 0>
+    safe_float(T source)
+    {
+        policy::cast_helper<FP, CAST<FP>>::template construct_implicitly(number, source);
+    }
 
     // alternative constructors
 

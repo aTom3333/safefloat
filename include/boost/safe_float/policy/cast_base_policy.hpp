@@ -2,32 +2,100 @@
 #define BOOST_SAFE_FLOAT_CAST_BASE_POLICY_HPP
 
 #include <type_traits>
+#include <boost/safe_float.hpp>
 
-namespace boost {
-namespace safe_float{
-namespace policy{
-
+namespace boost
+{
+namespace safe_float
+{
+namespace policy
+{
 /**
  * @brief Base policy for cast
  */
 template<class FP>
-struct cast_policy{};
+struct cast_policy
+{
+    template<typename T>
+    static constexpr bool can_cast_from = false;
+
+    template<typename T>
+    static constexpr bool can_explicitly_cast_from = false;
+
+    template<typename T>
+    static void cast_from(FP& target, T source)
+    {
+        target = source;
+    }
+
+    template<typename T>
+    static constexpr bool can_cast_to = false;
+
+    template<typename T>
+    static constexpr bool can_explicitly_cast_to = false;
+
+    template<typename T>
+    static T cast_to(FP source)
+    {
+        return T(source);
+    }
+};
 
 template<class FP>
-struct cast_none{};
+struct cast_none
+{
+    template<typename T>
+    static constexpr bool can_cast_from = false;
+
+    template<typename T>
+    static constexpr bool can_explicitly_cast_from = false;
+
+    template<typename T>
+    static constexpr bool can_cast_to = false;
+
+    template<typename T>
+    static constexpr bool can_explicitly_cast_to = false;
+};
+
+
+template<typename FP, typename CAST_POLICY>
+struct cast_helper
+{
+    template<typename T, std::enable_if_t<CAST_POLICY::template can_cast_from<T>, int> = 0>
+    static void construct_implicitly(FP& target, T source)
+    {
+        CAST_POLICY::template cast_from<T>(target, source);
+    }
+    template<typename T, std::enable_if_t<CAST_POLICY::template can_explicitly_cast_from<T>, int> = 0>
+    static void construct_explicitly(FP& target, T source)
+    {
+        CAST_POLICY::template cast_from<T>(target, source);
+    }
+
+    template<typename T, std::enable_if_t<CAST_POLICY::template can_cast_from<T>, int> = 0>
+    static T convert_implicitly(FP source)
+    {
+        CAST_POLICY::template cast_to<T>(source);
+    }
+    template<typename T, std::enable_if_t<CAST_POLICY::template can_explicitly_cast_from<T>, int> = 0>
+    static T convert_explicitly(FP source)
+    {
+        CAST_POLICY::template cast_to<T>(source);
+    }
+};
 
 /**
  * @brief compose_cast_policy creates a new policy combining the policies received by parameter
  * Cast policies passed by parameter should implement non overlaping casting methods
  */
 template<class FP, template<class> class... POLICIES>
-class compose_cast_policy : public POLICIES<FP>... {
-//TODO: NOT IMPLEMENTED
-    //check all POLICIES inherit from cast_policy
+class compose_cast_policy : public POLICIES<FP>...
+{
+    // TODO: NOT IMPLEMENTED
+    // check all POLICIES inherit from cast_policy
 };
 
-} //policy
-} //safe_float
-} //boost
+} // namespace policy
+} // namespace safe_float
+} // namespace boost
 #endif // BOOST_SAFE_FLOAT_CHECK_BASE_POLICY_HPP
-

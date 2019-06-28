@@ -35,6 +35,8 @@
 
 #include <boost/safe_float/policy/check_division_by_zero.hpp>
 
+#include <boost/safe_float/policy/cast_from_primitive.hpp>
+
 namespace boost {
 namespace safe_float{
 namespace policy{
