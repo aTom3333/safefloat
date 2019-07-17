@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_ostream, FPT, test_types){
 BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_comparison_operations, FPT, test_types){
     //comparison operations are not expected to require any policy check
     //comparison is expected to behave as the internal type behaves
-    safe_float<FPT> zero = 0.0f;
+    safe_float<FPT> zero = FPT(0.0);
     safe_float<FPT> max = std::numeric_limits<FPT>::max();
     safe_float<FPT> min = std::numeric_limits<FPT>::min();
 

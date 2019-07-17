@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_subtraction_inexact_rounding, FPT, tes
 
     // construct safe_float version of the same two numbers
     safe_float<FPT, policy::check_subtraction_inexact> c(std::numeric_limits<FPT>::min());
-    safe_float<FPT, policy::check_subtraction_inexact> d(pow(2, std::numeric_limits<FPT>::digits));
+    safe_float<FPT, policy::check_subtraction_inexact> d((FPT)pow(2, std::numeric_limits<FPT>::digits));
 
     // check the subtraction throws
     BOOST_CHECK_THROW(d-c, std::exception);

@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_multiplication_throws_on_overflow, FPT
 
     // construct safe_float version of the same two numbers
     safe_float<FPT, policy::check_multiplication_overflow> c(std::numeric_limits<FPT>::max());
-    safe_float<FPT, policy::check_multiplication_overflow> d(2);
+    safe_float<FPT, policy::check_multiplication_overflow> d(FPT(2));
 
     // check the multiplication throws
     BOOST_CHECK_THROW(c*d, std::exception);
@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_multiplication_throws_on_overflow, FPT
 
     // construct safe_float version of the same two numbers
     safe_float<FPT, policy::check_multiplication_overflow> g(std::numeric_limits<FPT>::lowest());
-    safe_float<FPT, policy::check_multiplication_overflow> h(2);
+    safe_float<FPT, policy::check_multiplication_overflow> h(FPT(2));
 
     // check the multiplication throws
     BOOST_CHECK_THROW(g*h, std::exception);
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_multiplication_invalid_result, FPT, te
 
     // construct safe_float version of the same two numbers
     safe_float<FPT, policy::check_multiplication_invalid_result> c(std::numeric_limits<FPT>::infinity());
-    safe_float<FPT, policy::check_multiplication_invalid_result> d(0);
+    safe_float<FPT, policy::check_multiplication_invalid_result> d(FPT(0));
 
     // check the multiplication throws
     BOOST_CHECK_THROW(c*d, std::exception);

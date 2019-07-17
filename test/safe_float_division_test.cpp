@@ -108,8 +108,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_division_invalid_result, FPT, test_typ
 
 BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_division_by_zero, FPT, test_types){
     // construct safe_float producing divide by zero
-    safe_float<FPT, policy::check_division_by_zero> c(1);
-    safe_float<FPT, policy::check_division_by_zero> d(0);
+    safe_float<FPT, policy::check_division_by_zero> c(FPT(1));
+    safe_float<FPT, policy::check_division_by_zero> d(FPT(0));
 
     // check the division throws
     BOOST_CHECK_THROW(c/d, std::exception);

@@ -40,8 +40,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_get_stored_value, FPT, test_types){
     safe_float<FPT> sa(std::numeric_limits<FPT>::max());
     safe_float<FPT> sb(std::numeric_limits<FPT>::min());
     safe_float<FPT> sc(std::numeric_limits<FPT>::infinity());
-    safe_float<FPT> sd(0);
-    safe_float<FPT> se(1);
+    safe_float<FPT> sd(d);
+    safe_float<FPT> se(e);
     //check the values match when obtaining the stored value
     BOOST_CHECK_EQUAL(a, sa.get_stored_value());
     BOOST_CHECK_EQUAL(b, sb.get_stored_value());

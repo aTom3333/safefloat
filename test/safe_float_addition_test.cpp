@@ -69,8 +69,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_addition_inexact_rounding, FPT, test_t
     BOOST_CHECK(a+b-b != a);
 
     // construct safe_float version of the same two numbers
-    safe_float<FPT, policy::check_addition_inexact> c(1);
-    safe_float<FPT, policy::check_addition_inexact> d(pow(2, std::numeric_limits<FPT>::digits));
+    safe_float<FPT, policy::check_addition_inexact> c(FPT(1));
+    safe_float<FPT, policy::check_addition_inexact> d((FPT)pow(2, std::numeric_limits<FPT>::digits));
 
     // check the addition throws
     BOOST_CHECK_THROW(c+d, std::exception);

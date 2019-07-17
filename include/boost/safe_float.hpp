@@ -12,7 +12,7 @@ namespace boost
 namespace safe_float
 {
 template<class FP, template<class T> class CHECK = policy::check_all, class ERROR_HANDLING = policy::on_fail_throw,
-         template<class T> class CAST = policy::cast_from_primitive::none>
+         template<class T> class CAST = policy::cast_from_primitive::same>
 class safe_float : private CHECK<FP>, ERROR_HANDLING
 {
     FP number;
@@ -53,7 +53,12 @@ public:
         policy::cast_helper<FP, CAST<FP>>::template construct_implicitly(number, source);
     }
 
-    // alternative constructors
+    // Conversion operators
+    template<typename T, std::enable_if_t<CAST<FP>::template can_cast_to<T>, int> = 0>
+    operator T () {
+        return policy::cast_helper<FP, CAST<FP>>::template convert_implicitly(number);
+    }
+    
 
     // Access to internal representation
     FP get_stored_value() const { return number; }
