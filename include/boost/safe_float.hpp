@@ -23,6 +23,9 @@ class safe_float : private CHECK<FP>, ERROR_HANDLING
     ERROR_HANDLING& handler() noexcept { return static_cast<ERROR_HANDLING&>(*this); }
 
 public:
+    
+    using value_type = FP;
+    
     static_assert(std::is_floating_point<FP>::value,
                   "First template parameter in safe_float has to be floating point data type");
 
