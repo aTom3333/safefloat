@@ -37,29 +37,34 @@ public:
         std::enable_if_t<
             std::is_same_v<
                 FP,
-                OtherFP> && !CAST<FP>::template can_explicitly_cast_from<OtherFP> && !CAST<FP>::template can_cast_from<OtherFP>,
+                OtherFP> && !CAST<safe_float>::template can_explicitly_cast_from<OtherFP> && !CAST<safe_float>::template can_cast_from<OtherFP>,
             int> = 0>
     explicit safe_float(OtherFP f) : number{f}
     {}
 
     // Explicit constructors available through the cast policy
-    template<typename T, std::enable_if_t<CAST<FP>::template can_explicitly_cast_from<T>, int> = 0>
+    template<typename T, std::enable_if_t<CAST<safe_float>::template can_explicitly_cast_from<T>, int> = 0>
     explicit safe_float(T source)
     {
-        policy::cast_helper<FP, CAST<FP>>::template construct_explicitly(number, source);
+        policy::cast_helper<FP, CAST<safe_float>>::template construct_explicitly(number, source);
     }
 
     // Implicit constructors available through the cast policy
-    template<typename T, std::enable_if_t<CAST<FP>::template can_cast_from<T>, int> = 0>
+    template<typename T, std::enable_if_t<CAST<safe_float>::template can_cast_from<T>, int> = 0>
     safe_float(T source)
     {
-        policy::cast_helper<FP, CAST<FP>>::template construct_implicitly(number, source);
+        policy::cast_helper<FP, CAST<safe_float>>::template construct_implicitly(number, source);
     }
 
     // Conversion operators
-    template<typename T, std::enable_if_t<CAST<FP>::template can_cast_to<T>, int> = 0>
+    template<typename T, std::enable_if_t<CAST<safe_float>::template can_cast_to<T>, int> = 0>
     operator T () {
-        return policy::cast_helper<FP, CAST<FP>>::template convert_implicitly(number);
+        return policy::cast_helper<FP, CAST<safe_float>>::template convert_implicitly(number);
+    }
+
+    template<typename T, std::enable_if_t<CAST<safe_float>::template can_explicitly_cast_to<T>, int> = 0>
+    explicit operator T () {
+        return policy::cast_helper<FP, CAST<safe_float>>::template convert_explicitly(number);
     }
     
 

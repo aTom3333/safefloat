@@ -3,6 +3,7 @@
 
 #include <limits>
 #include <type_traits>
+#include <boost/safe_float/utility.hpp>
 
 
 namespace boost
@@ -13,15 +14,21 @@ namespace policy
 {
 namespace cast_from_primitive
 {
-template<typename FP, bool enable_other_explicitly = false, std::enable_if_t<std::is_floating_point_v<FP>, int> = 0>
+template<typename SF, bool is_explicit = false, std::enable_if_t<is_safe_float<SF>::value, int> = 0>
 struct none_impl
 {
     template<typename T>
     static constexpr bool can_cast_from = false;
 
     template<typename T>
-    static constexpr bool can_explicitly_cast_from = enable_other_explicitly;
-
+    static constexpr bool can_explicitly_cast_from = false;
+    
+    template<typename T>
+    static void cast_from(typename SF::value_type& target, T source)
+    {
+        target = source;
+    }
+    
     template<typename T>
     static constexpr bool can_cast_to = false;
 
@@ -29,23 +36,23 @@ struct none_impl
     static constexpr bool can_explicitly_cast_to = false;
 };
 
-template<typename FP>
-using none = none_impl<FP>;
-template<typename FP>
-using none_with_explicit = none_impl<FP, true>;
+template<typename SF>
+using none = none_impl<SF, true>;
+template<typename SF>
+using none_explicit = none_impl<SF, false>;
 
-template<typename FP, bool enable_other_explicitly = false, std::enable_if_t<std::is_floating_point_v<FP>, int> = 0>
+template<typename SF, bool is_explicit = false, std::enable_if_t<is_safe_float<SF>::value, int> = 0>
 struct same_impl
 {
     template<typename T>
-    static constexpr bool can_cast_from = std::is_same_v<FP, T>;
+    static constexpr bool can_cast_from = !is_explicit && std::is_same_v<typename SF::value_type, T>;
 
     template<typename T>
     static constexpr bool can_explicitly_cast_from =
-        std::is_floating_point_v<T>&& enable_other_explicitly && !can_cast_from<T>;
+        is_explicit && std::is_same_v<typename SF::value_type, T>;
 
     template<typename T>
-    static void cast_from(FP& target, T source)
+    static void cast_from(typename SF::value_type& target, T source)
     {
         target = source;
     }
@@ -57,24 +64,24 @@ struct same_impl
     static constexpr bool can_explicitly_cast_to = false;
 };
 
-template<typename FP>
-using same = same_impl<FP>;
-template<typename FP>
-using same_with_explicit = same_impl<FP, true>;
+template<typename SF>
+using same = same_impl<SF>;
+template<typename SF>
+using same_explicit = same_impl<SF, true>;
 
-template<typename FP, bool enable_other_explicitly = false, std::enable_if_t<std::is_floating_point_v<FP>, int> = 0>
+template<typename SF, bool is_explicit = false, std::enable_if_t<is_safe_float<SF>::value, int> = 0>
 struct more_precise_impl
 {
     template<typename T>
     static constexpr bool can_cast_from =
-        std::is_floating_point_v<T>&& std::numeric_limits<T>::digits >= std::numeric_limits<FP>::digits;
+        !is_explicit && std::is_floating_point_v<T> && std::numeric_limits<T>::digits >= std::numeric_limits<typename SF::value_type>::digits;
 
     template<typename T>
     static constexpr bool can_explicitly_cast_from =
-        std::is_floating_point_v<T>&& enable_other_explicitly && !can_cast_from<T>;
+        is_explicit && std::is_floating_point_v<T> && std::numeric_limits<T>::digits >= std::numeric_limits<typename SF::value_type>::digits;
 
     template<typename T>
-    static void cast_from(FP& target, T source)
+    static void cast_from(typename SF::value_type& target, T source)
     {
         target = source;
     }
@@ -86,24 +93,24 @@ struct more_precise_impl
     static constexpr bool can_explicitly_cast_to = false;
 };
 
-template<typename FP>
-using more_precise = more_precise_impl<FP>;
-template<typename FP>
-using more_precise_with_explicit = more_precise_impl<FP, true>;
+template<typename SF>
+using more_precise = more_precise_impl<SF>;
+template<typename SF>
+using more_precise_explicit = more_precise_impl<SF, true>;
 
-template<typename FP, bool enable_other_explicitly = false, std::enable_if_t<std::is_floating_point_v<FP>, int> = 0>
+template<typename SF, bool is_explicit = false, std::enable_if_t<is_safe_float<SF>::value, int> = 0>
 struct less_precise_impl
 {
     template<typename T>
     static constexpr bool can_cast_from =
-        std::is_floating_point_v<T>&& std::numeric_limits<T>::digits <= std::numeric_limits<FP>::digits;
+        !is_explicit && std::is_floating_point_v<T>&& std::numeric_limits<T>::digits <= std::numeric_limits<typename SF::value_type>::digits;
 
     template<typename T>
     static constexpr bool can_explicitly_cast_from =
-        std::is_floating_point_v<T>&& enable_other_explicitly && !can_cast_from<T>;
+        is_explicit && std::is_floating_point_v<T>&& std::numeric_limits<T>::digits <= std::numeric_limits<typename SF::value_type>::digits;
 
     template<typename T>
-    static void cast_from(FP& target, T source)
+    static void cast_from(typename SF::value_type& target, T source)
     {
         target = source;
     }
@@ -115,22 +122,22 @@ struct less_precise_impl
     static constexpr bool can_explicitly_cast_to = false;
 };
 
-template<typename FP>
-using less_precise = less_precise_impl<FP>;
-template<typename FP>
-using less_precise_with_explicit = less_precise_impl<FP, true>;
+template<typename SF>
+using less_precise = less_precise_impl<SF>;
+template<typename SF>
+using less_precise_explicit = less_precise_impl<SF, true>;
 
-template<typename FP, bool enable_other_explicitly = false, std::enable_if_t<std::is_floating_point_v<FP>, int> = 0>
+template<typename SF, bool is_explicit = false, std::enable_if_t<is_safe_float<SF>::value, int> = 0>
 struct all_impl
 {
     template<typename T>
-    static constexpr bool can_cast_from = std::is_floating_point_v<T>;
+    static constexpr bool can_cast_from = !is_explicit && std::is_floating_point_v<T>;
 
     template<typename T>
-    static constexpr bool can_explicitly_cast_from = false;
+    static constexpr bool can_explicitly_cast_from = is_explicit && std::is_floating_point_v<T>;
 
     template<typename T>
-    static void cast_from(FP& target, T source)
+    static void cast_from(typename SF::value_type& target, T source)
     {
         target = source;
     }
@@ -142,10 +149,10 @@ struct all_impl
     static constexpr bool can_explicitly_cast_to = false;
 };
 
-template<typename FP>
-using all = all_impl<FP>;
-template<typename FP>
-using all_with_explicit = all_impl<FP, true>;
+template<typename SF>
+using all = all_impl<SF>;
+template<typename SF>
+using all_explicit = all_impl<SF, true>;
 } // namespace cast_from_primitive
 
 } // namespace policy

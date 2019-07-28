@@ -9,6 +9,7 @@
 
 //cast policies
 #include <boost/safe_float/policy/cast_base_policy.hpp>
+#include <boost/safe_float/policy/cast_from.hpp>
 
 //composed policies
 #include <boost/safe_float/policy/policy_composers.hpp>

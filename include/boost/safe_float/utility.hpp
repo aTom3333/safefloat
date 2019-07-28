@@ -8,6 +8,17 @@ namespace boost
 {
 namespace safe_float
 {
+
+template<typename, template<typename> typename, typename, template<typename> typename>
+class safe_float;
+
+template<typename T>
+struct is_safe_float : std::false_type {};
+
+template<typename SF, template<typename> typename CHECK, typename REPORT, template<typename> typename CAST>
+struct is_safe_float<safe_float<SF, CHECK, REPORT, CAST>> : std::true_type {};
+
+
 namespace policy
 {
 template<template<typename...> typename A, template<typename...> typename B>
