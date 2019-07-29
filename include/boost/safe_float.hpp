@@ -59,12 +59,12 @@ public:
     // Conversion operators
     template<typename T, std::enable_if_t<CAST<safe_float>::template can_cast_to<T>, int> = 0>
     operator T () {
-        return policy::cast_helper<FP, CAST<safe_float>>::template convert_implicitly(number);
+        return policy::cast_helper<FP, CAST<safe_float>>::template convert_implicitly<T>(number);
     }
 
     template<typename T, std::enable_if_t<CAST<safe_float>::template can_explicitly_cast_to<T>, int> = 0>
     explicit operator T () {
-        return policy::cast_helper<FP, CAST<safe_float>>::template convert_explicitly(number);
+        return policy::cast_helper<FP, CAST<safe_float>>::template convert_explicitly<T>(number);
     }
     
 

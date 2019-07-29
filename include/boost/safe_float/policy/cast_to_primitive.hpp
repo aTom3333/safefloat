@@ -11,7 +11,7 @@ namespace safe_float
 {
 namespace policy
 {
-namespace cast_from_primitive
+namespace cast_to_primitive
 {
 template<typename SF, bool is_explicit = false, std::enable_if_t<is_safe_float<SF>::value, int> = 0>
 struct none_impl

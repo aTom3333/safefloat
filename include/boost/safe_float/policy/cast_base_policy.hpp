@@ -72,15 +72,15 @@ struct cast_helper
         CAST_POLICY::template cast_from<T>(target, source);
     }
 
-    template<typename T, std::enable_if_t<CAST_POLICY::template can_cast_from<T>, int> = 0>
+    template<typename T, std::enable_if_t<CAST_POLICY::template can_cast_to<T>, int> = 0>
     static T convert_implicitly(FP source)
     {
-        CAST_POLICY::template cast_to<T>(source);
+        return CAST_POLICY::template cast_to<T>(source);
     }
-    template<typename T, std::enable_if_t<CAST_POLICY::template can_explicitly_cast_from<T>, int> = 0>
+    template<typename T, std::enable_if_t<CAST_POLICY::template can_explicitly_cast_to<T>, int> = 0>
     static T convert_explicitly(FP source)
     {
-        CAST_POLICY::template cast_to<T>(source);
+        return CAST_POLICY::template cast_to<T>(source);
     }
 };
 

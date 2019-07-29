@@ -10,6 +10,9 @@
 //cast policies
 #include <boost/safe_float/policy/cast_base_policy.hpp>
 #include <boost/safe_float/policy/cast_from.hpp>
+#include <boost/safe_float/policy/cast_to.hpp>
+#include <boost/safe_float/policy/cast_from_primitive.hpp>
+#include <boost/safe_float/policy/cast_to_primitive.hpp>
 
 //composed policies
 #include <boost/safe_float/policy/policy_composers.hpp>
@@ -35,8 +38,6 @@
 #include <boost/safe_float/policy/check_division_invalid_result.hpp>
 
 #include <boost/safe_float/policy/check_division_by_zero.hpp>
-
-#include <boost/safe_float/policy/cast_from_primitive.hpp>
 
 namespace boost {
 namespace safe_float{

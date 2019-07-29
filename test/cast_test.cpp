@@ -15,6 +15,7 @@
 
 #include <boost/safe_float.hpp>
 #include <boost/safe_float/convenience.hpp>
+#include <boost/safe_float/policy/cast_to_primitive.hpp>
 
 //types to be tested
 using test_types=boost::mpl::list<
@@ -393,6 +394,346 @@ BOOST_AUTO_TEST_CASE(safe_float_cast_from_primitive_all_explicit) {
     BOOST_CHECK((std::is_constructible_v<sld, long double>));
 }
 
+BOOST_AUTO_TEST_CASE(safe_float_cast_to_primitive_none) {
+    // Cannot be converted to any primitive
+    using sf = sf_test_cast<float, policy::cast_to_primitive::none>;
+
+    BOOST_CHECK((not std::is_convertible_v<sf, float>));
+    BOOST_CHECK((not std::is_convertible_v<sf, double>));
+    BOOST_CHECK((not std::is_convertible_v<sf, long double>));
+    BOOST_CHECK((not std::is_constructible_v<float, sf>));
+    BOOST_CHECK((not std::is_constructible_v<double, sf>));
+    BOOST_CHECK((not std::is_constructible_v<long double, sf>));
+
+
+    // Cannot be converted to any primitive
+    using sd = sf_test_cast<double, policy::cast_to_primitive::none>;
+
+    BOOST_CHECK((not std::is_convertible_v<sd, float>));
+    BOOST_CHECK((not std::is_convertible_v<sd, double>));
+    BOOST_CHECK((not std::is_convertible_v<sd, long double>));
+    BOOST_CHECK((not std::is_constructible_v<float, sd>));
+    BOOST_CHECK((not std::is_constructible_v<double, sd>));
+    BOOST_CHECK((not std::is_constructible_v<long double, sd>));
+
+
+    // Cannot be converted to any primitive
+    using sld = sf_test_cast<long double, policy::cast_to_primitive::none>;
+
+    BOOST_CHECK((not std::is_convertible_v<sld, float>));
+    BOOST_CHECK((not std::is_convertible_v<sld, double>));
+    BOOST_CHECK((not std::is_convertible_v<sld, long double>));
+    BOOST_CHECK((not std::is_constructible_v<float, sld>));
+    BOOST_CHECK((not std::is_constructible_v<double, sld>));
+    BOOST_CHECK((not std::is_constructible_v<long double, sld>));
+}
+
+BOOST_AUTO_TEST_CASE(safe_float_cast_to_primitive_none_explicit) {
+    // Cannot be converted to any primitive
+    using sf = sf_test_cast<float, policy::cast_to_primitive::none_explicit>;
+
+    BOOST_CHECK((not std::is_convertible_v<sf, float>));
+    BOOST_CHECK((not std::is_convertible_v<sf, double>));
+    BOOST_CHECK((not std::is_convertible_v<sf, long double>));
+    BOOST_CHECK((not std::is_constructible_v<float, sf>));
+    BOOST_CHECK((not std::is_constructible_v<double, sf>));
+    BOOST_CHECK((not std::is_constructible_v<long double, sf>));
+
+
+    // Cannot be converted to any primitive
+    using sd = sf_test_cast<double, policy::cast_to_primitive::none_explicit>;
+
+    BOOST_CHECK((not std::is_convertible_v<sd, float>));
+    BOOST_CHECK((not std::is_convertible_v<sd, double>));
+    BOOST_CHECK((not std::is_convertible_v<sd, long double>));
+    BOOST_CHECK((not std::is_constructible_v<float, sd>));
+    BOOST_CHECK((not std::is_constructible_v<double, sd>));
+    BOOST_CHECK((not std::is_constructible_v<long double, sd>));
+
+
+    // Cannot be converted to any primitive
+    using sld = sf_test_cast<long double, policy::cast_to_primitive::none_explicit>;
+
+    BOOST_CHECK((not std::is_convertible_v<sld, float>));
+    BOOST_CHECK((not std::is_convertible_v<sld, double>));
+    BOOST_CHECK((not std::is_convertible_v<sld, long double>));
+    BOOST_CHECK((not std::is_constructible_v<float, sld>));
+    BOOST_CHECK((not std::is_constructible_v<double, sld>));
+    BOOST_CHECK((not std::is_constructible_v<long double, sld>));
+}
+
+BOOST_AUTO_TEST_CASE(safe_float_cast_to_primitive_same) {
+    // Can be converted to float only
+    using sf = sf_test_cast<float, policy::cast_to_primitive::same>;
+
+    BOOST_CHECK((std::is_convertible_v<sf, float>));
+    BOOST_CHECK((not std::is_convertible_v<sf, double>));
+    BOOST_CHECK((not std::is_convertible_v<sf, long double>));
+    BOOST_CHECK((std::is_constructible_v<float, sf>));
+    BOOST_CHECK((not std::is_constructible_v<double, sf>));
+    BOOST_CHECK((not std::is_constructible_v<long double, sf>));
+
+
+    // Can be converted to double only
+    using sd = sf_test_cast<double, policy::cast_to_primitive::same>;
+
+    BOOST_CHECK((not std::is_convertible_v<sd, float>));
+    BOOST_CHECK((std::is_convertible_v<sd, double>));
+    BOOST_CHECK((not std::is_convertible_v<sd, long double>));
+    BOOST_CHECK((not std::is_constructible_v<float, sd>));
+    BOOST_CHECK((std::is_constructible_v<double, sd>));
+    BOOST_CHECK((not std::is_constructible_v<long double, sd>));
+
+
+    // Can be converted to long double only
+    using sld = sf_test_cast<long double, policy::cast_to_primitive::same>;
+
+    BOOST_CHECK((not std::is_convertible_v<sld, float>));
+    BOOST_CHECK((not std::is_convertible_v<sld, double>));
+    BOOST_CHECK((std::is_convertible_v<sld, long double>));
+    BOOST_CHECK((not std::is_constructible_v<float, sld>));
+    BOOST_CHECK((not std::is_constructible_v<double, sld>));
+    BOOST_CHECK((std::is_constructible_v<long double, sld>));
+}
+
+BOOST_AUTO_TEST_CASE(safe_float_cast_to_primitive_same_explicit) {
+    // Cannot be converted to any primitive but is explicitly castable to float
+    using sf = sf_test_cast<float, policy::cast_to_primitive::same_explicit>;
+
+    BOOST_CHECK((not std::is_convertible_v<sf, float>));
+    BOOST_CHECK((not std::is_convertible_v<sf, double>));
+    BOOST_CHECK((not std::is_convertible_v<sf, long double>));
+    BOOST_CHECK((std::is_constructible_v<float, sf>));
+    BOOST_CHECK((not std::is_constructible_v<double, sf>));
+    BOOST_CHECK((not std::is_constructible_v<long double, sf>));
+
+
+    // Cannot be converted to any primitive but is explicitly castable to double
+    using sd = sf_test_cast<double, policy::cast_to_primitive::same_explicit>;
+
+    BOOST_CHECK((not std::is_convertible_v<sd, float>));
+    BOOST_CHECK((not std::is_convertible_v<sd, double>));
+    BOOST_CHECK((not std::is_convertible_v<sd, long double>));
+    BOOST_CHECK((not std::is_constructible_v<float, sd>));
+    BOOST_CHECK((std::is_constructible_v<double, sd>));
+    BOOST_CHECK((not std::is_constructible_v<long double, sd>));
+
+
+    // Cannot be converted to any primitive but is explicitly castable to long double
+    using sld = sf_test_cast<long double, policy::cast_to_primitive::same_explicit>;
+
+    BOOST_CHECK((not std::is_convertible_v<sld, float>));
+    BOOST_CHECK((not std::is_convertible_v<sld, double>));
+    BOOST_CHECK((not std::is_convertible_v<sld, long double>));
+    BOOST_CHECK((not std::is_constructible_v<float, sld>));
+    BOOST_CHECK((not std::is_constructible_v<double, sld>));
+    BOOST_CHECK((std::is_constructible_v<long double, sld>));
+}
+
+BOOST_AUTO_TEST_CASE(safe_float_cast_to_primitive_more_precise) {
+    // Can be converted to float, double and long double
+    using sf = sf_test_cast<float, policy::cast_to_primitive::more_precise>;
+
+    BOOST_CHECK((std::is_convertible_v<sf, float>));
+    BOOST_CHECK((std::is_convertible_v<sf, double>));
+    BOOST_CHECK((std::is_convertible_v<sf, long double>));
+    BOOST_CHECK((std::is_constructible_v<float, sf>));
+    BOOST_CHECK((std::is_constructible_v<double, sf>));
+    BOOST_CHECK((std::is_constructible_v<long double, sf>));
+
+
+    // Can be converted to double and long double
+    using sd = sf_test_cast<double, policy::cast_to_primitive::more_precise>;
+
+    BOOST_CHECK((not std::is_convertible_v<sd, float>));
+    BOOST_CHECK((std::is_convertible_v<sd, double>));
+    BOOST_CHECK((std::is_convertible_v<sd, long double>));
+    BOOST_CHECK((not std::is_constructible_v<float, sd>));
+    BOOST_CHECK((std::is_constructible_v<double, sd>));
+    BOOST_CHECK((std::is_constructible_v<long double, sd>));
+
+
+    // Can be converted to long double only
+    using sld = sf_test_cast<long double, policy::cast_to_primitive::more_precise>;
+
+    BOOST_CHECK((not std::is_convertible_v<sld, float>));
+    BOOST_CHECK((not std::is_convertible_v<sld, double>));
+    BOOST_CHECK((std::is_convertible_v<sld, long double>));
+    BOOST_CHECK((not std::is_constructible_v<float, sld>));
+    BOOST_CHECK((not std::is_constructible_v<double, sld>));
+    BOOST_CHECK((std::is_constructible_v<long double, sld>));
+}
+
+BOOST_AUTO_TEST_CASE(safe_float_cast_to_primitive_more_precise_explicit) {
+    // Can be explicitly converted to float, double and long double
+    using sf = sf_test_cast<float, policy::cast_to_primitive::more_precise_explicit>;
+
+    BOOST_CHECK((not std::is_convertible_v<sf, float>));
+    BOOST_CHECK((not std::is_convertible_v<sf, double>));
+    BOOST_CHECK((not std::is_convertible_v<sf, long double>));
+    BOOST_CHECK((std::is_constructible_v<float, sf>));
+    BOOST_CHECK((std::is_constructible_v<double, sf>));
+    BOOST_CHECK((std::is_constructible_v<long double, sf>));
+
+
+    // Can be explicitly converted to double and long double
+    using sd = sf_test_cast<double, policy::cast_to_primitive::more_precise_explicit>;
+
+    BOOST_CHECK((not std::is_convertible_v<sd, float>));
+    BOOST_CHECK((not std::is_convertible_v<sd, double>));
+    BOOST_CHECK((not std::is_convertible_v<sd, long double>));
+    BOOST_CHECK((not std::is_constructible_v<float, sd>));
+    BOOST_CHECK((std::is_constructible_v<double, sd>));
+    BOOST_CHECK((std::is_constructible_v<long double, sd>));
+
+
+    // Can be explicitly converted to long double only
+    using sld = sf_test_cast<long double, policy::cast_to_primitive::more_precise_explicit>;
+
+    BOOST_CHECK((not std::is_convertible_v<sld, float>));
+    BOOST_CHECK((not std::is_convertible_v<sld, double>));
+    BOOST_CHECK((not std::is_convertible_v<sld, long double>));
+    BOOST_CHECK((not std::is_constructible_v<float, sld>));
+    BOOST_CHECK((not std::is_constructible_v<double, sld>));
+    BOOST_CHECK((std::is_constructible_v<long double, sld>));
+}
+
+BOOST_AUTO_TEST_CASE(safe_float_cast_to_primitive_less_precise) {
+    // Can be converted to float
+    using sf = sf_test_cast<float, policy::cast_to_primitive::less_precise>;
+
+    BOOST_CHECK((std::is_convertible_v<sf, float>));
+    BOOST_CHECK((not std::is_convertible_v<sf, double>));
+    BOOST_CHECK((not std::is_convertible_v<sf, long double>));
+    BOOST_CHECK((std::is_constructible_v<float, sf>));
+    BOOST_CHECK((not std::is_constructible_v<double, sf>));
+    BOOST_CHECK((not std::is_constructible_v<long double, sf>));
+
+
+    // Can be converted to float and double
+    using sd = sf_test_cast<double, policy::cast_to_primitive::less_precise>;
+
+    BOOST_CHECK((std::is_convertible_v<sd, float>));
+    BOOST_CHECK((std::is_convertible_v<sd, double>));
+    BOOST_CHECK((not std::is_convertible_v<sd, long double>));
+    BOOST_CHECK((std::is_constructible_v<float, sd>));
+    BOOST_CHECK((std::is_constructible_v<double, sd>));
+    BOOST_CHECK((not std::is_constructible_v<long double, sd>));
+
+
+    // Can be converted to float, double and long double
+    using sld = sf_test_cast<long double, policy::cast_to_primitive::less_precise>;
+
+    BOOST_CHECK((std::is_convertible_v<sld, float>));
+    BOOST_CHECK((std::is_convertible_v<sld, double>));
+    BOOST_CHECK((std::is_convertible_v<sld, long double>));
+    BOOST_CHECK((std::is_constructible_v<float, sld>));
+    BOOST_CHECK((std::is_constructible_v<double, sld>));
+    BOOST_CHECK((std::is_constructible_v<long double, sld>));
+}
+
+BOOST_AUTO_TEST_CASE(safe_float_cast_to_primitive_less_precise_explicit) {
+    // Can be explicitly converted to float
+    using sf = sf_test_cast<float, policy::cast_to_primitive::less_precise_explicit>;
+
+    BOOST_CHECK((not std::is_convertible_v<sf, float>));
+    BOOST_CHECK((not std::is_convertible_v<sf, double>));
+    BOOST_CHECK((not std::is_convertible_v<sf, long double>));
+    BOOST_CHECK((std::is_constructible_v<float, sf>));
+    BOOST_CHECK((not std::is_constructible_v<double, sf>));
+    BOOST_CHECK((not std::is_constructible_v<long double, sf>));
+
+
+    // Can be explicitly converted to float and double
+    using sd = sf_test_cast<double, policy::cast_to_primitive::less_precise_explicit>;
+
+    BOOST_CHECK((not std::is_convertible_v<sd, float>));
+    BOOST_CHECK((not std::is_convertible_v<sd, double>));
+    BOOST_CHECK((not std::is_convertible_v<sd, long double>));
+    BOOST_CHECK((std::is_constructible_v<float, sd>));
+    BOOST_CHECK((std::is_constructible_v<double, sd>));
+    BOOST_CHECK((not std::is_constructible_v<long double, sd>));
+
+
+    // Can be explicitly converted to float, double and long double
+    using sld = sf_test_cast<long double, policy::cast_to_primitive::less_precise_explicit>;
+
+    BOOST_CHECK((not std::is_convertible_v<sld, float>));
+    BOOST_CHECK((not std::is_convertible_v<sld, double>));
+    BOOST_CHECK((not std::is_convertible_v<sld, long double>));
+    BOOST_CHECK((std::is_constructible_v<float, sld>));
+    BOOST_CHECK((std::is_constructible_v<double, sld>));
+    BOOST_CHECK((std::is_constructible_v<long double, sld>));
+}
+
+BOOST_AUTO_TEST_CASE(safe_float_cast_to_primitive_all) {
+    // Can be converted to float, double and long double
+    using sf = sf_test_cast<float, policy::cast_to_primitive::all>;
+
+    BOOST_CHECK((std::is_convertible_v<sf, float>));
+    BOOST_CHECK((std::is_convertible_v<sf, double>));
+    BOOST_CHECK((std::is_convertible_v<sf, long double>));
+    BOOST_CHECK((std::is_constructible_v<float, sf>));
+    BOOST_CHECK((std::is_constructible_v<double, sf>));
+    BOOST_CHECK((std::is_constructible_v<long double, sf>));
+
+
+    // Can be converted to float, double and long double
+    using sd = sf_test_cast<double, policy::cast_to_primitive::all>;
+
+    BOOST_CHECK((std::is_convertible_v<sd, float>));
+    BOOST_CHECK((std::is_convertible_v<sd, double>));
+    BOOST_CHECK((std::is_convertible_v<sd, long double>));
+    BOOST_CHECK((std::is_constructible_v<float, sd>));
+    BOOST_CHECK((std::is_constructible_v<double, sd>));
+    BOOST_CHECK((std::is_constructible_v<long double, sd>));
+
+
+    // Can be converted to float, double and long double
+    using sld = sf_test_cast<long double, policy::cast_to_primitive::all>;
+
+    BOOST_CHECK((std::is_convertible_v<sld, float>));
+    BOOST_CHECK((std::is_convertible_v<sld, double>));
+    BOOST_CHECK((std::is_convertible_v<sld, long double>));
+    BOOST_CHECK((std::is_constructible_v<float, sld>));
+    BOOST_CHECK((std::is_constructible_v<double, sld>));
+    BOOST_CHECK((std::is_constructible_v<long double, sld>));
+}
+
+BOOST_AUTO_TEST_CASE(safe_float_cast_to_primitive_all_explicit) {
+    // Can be explicitly converted to float, double and long double
+    using sf = sf_test_cast<float, policy::cast_to_primitive::all_explicit>;
+
+    BOOST_CHECK((not std::is_convertible_v<sf, float>));
+    BOOST_CHECK((not std::is_convertible_v<sf, double>));
+    BOOST_CHECK((not std::is_convertible_v<sf, long double>));
+    BOOST_CHECK((std::is_constructible_v<float, sf>));
+    BOOST_CHECK((std::is_constructible_v<double, sf>));
+    BOOST_CHECK((std::is_constructible_v<long double, sf>));
+
+
+    // Can be explicitly converted to float, double and long double
+    using sd = sf_test_cast<double, policy::cast_to_primitive::all_explicit>;
+
+    BOOST_CHECK((not std::is_convertible_v<sd, float>));
+    BOOST_CHECK((not std::is_convertible_v<sd, double>));
+    BOOST_CHECK((not std::is_convertible_v<sd, long double>));
+    BOOST_CHECK((std::is_constructible_v<float, sd>));
+    BOOST_CHECK((std::is_constructible_v<double, sd>));
+    BOOST_CHECK((std::is_constructible_v<long double, sd>));
+
+
+    // Can be explicitly converted to float, double and long double
+    using sld = sf_test_cast<long double, policy::cast_to_primitive::all_explicit>;
+
+    BOOST_CHECK((not std::is_convertible_v<sld, float>));
+    BOOST_CHECK((not std::is_convertible_v<sld, double>));
+    BOOST_CHECK((not std::is_convertible_v<sld, long double>));
+    BOOST_CHECK((std::is_constructible_v<float, sld>));
+    BOOST_CHECK((std::is_constructible_v<double, sld>));
+    BOOST_CHECK((std::is_constructible_v<long double, sld>));
+}
+
 BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_cast_from_int, FPT, test_types){
     //set initial values
     int a = 0;
@@ -424,6 +765,48 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_explicit_cast_from_int, FPT, test_type
     sf sb(b);
     sf sc(c);
     sf sd(d);
+    //check the values match when obtaining the stored value
+    BOOST_CHECK_EQUAL(a, sa.get_stored_value());
+    BOOST_CHECK_EQUAL(b, sb.get_stored_value());
+    BOOST_CHECK_EQUAL(c, sc.get_stored_value());
+    BOOST_CHECK_EQUAL(d, sd.get_stored_value());
+}
+
+BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_cast_to_int, FPT, test_types){
+    //create safe version of the values
+    using sf = safe_float<FPT, policy::check_all, policy::on_fail_throw, policy::allow_cast_to<int>::policy>;
+    sf sa((FPT)0);
+    sf sb((FPT)1);
+    sf sc((FPT)-284554);
+    sf sd((FPT)684654);
+
+    // cast to int
+    int a = sa;
+    int b = sb;
+    int c = sc;
+    int d = sd;
+    
+    //check the values match when obtaining the stored value
+    BOOST_CHECK_EQUAL(a, sa.get_stored_value());
+    BOOST_CHECK_EQUAL(b, sb.get_stored_value());
+    BOOST_CHECK_EQUAL(c, sc.get_stored_value());
+    BOOST_CHECK_EQUAL(d, sd.get_stored_value());
+}
+
+BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_explicit_cast_to_int, FPT, test_types){
+    //create safe version of the values
+    using sf = safe_float<FPT, policy::check_all, policy::on_fail_throw, policy::allow_cast_to<int>::policy>;
+    sf sa((FPT)0);
+    sf sb((FPT)1);
+    sf sc((FPT)-284554);
+    sf sd((FPT)684654);
+
+    // cast to int
+    int a(sa);
+    int b(sb);
+    int c(sc);
+    int d(sd);
+    
     //check the values match when obtaining the stored value
     BOOST_CHECK_EQUAL(a, sa.get_stored_value());
     BOOST_CHECK_EQUAL(b, sb.get_stored_value());

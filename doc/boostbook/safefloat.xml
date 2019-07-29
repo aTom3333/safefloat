@@ -1239,43 +1239,157 @@ safe_float&lt;float, new_policy&gt; sf;
         
         <itemizedlist>
           <listitem>
-            policy::cast_from_primitive::none : Doesn't allow cast from any floating point primitive. Here and bellow "floating point primitive"
-            refers to types T such that <code>std::is_floating_point&lt;T&gt;::value == true</code>.
+            <para>
+              <code>cast_from_primitive::none</code>
+              : Doesn't allow cast from any floating point primitive. Here and bellow "floating point primitive"
+              refers to types T such that <code>std::is_floating_point&lt;T&gt;::value == true</code>.
+            </para>
           </listitem>
           <listitem>
-            policy::cast_from_primitive::none_with_explict : Doesn't allow implicit cast from any floating point primitive but allow
-            explicit cast from every floating point primitive.
+            <para>
+              <code>cast_from_primitive::same</code>
+              : Allow implicit cast from the wrapped floating point primitive.
+            </para>
           </listitem>
           <listitem>
-            policy::cast_from_primitive::same : Allow implicit cast from the wrapped floating point primitive.
+            <para>
+              <code>cast_from_primitive::same_explicit</code>
+              : Allow explicit cast from the wrapped floating point primitive.
+            </para>
           </listitem>
           <listitem>
-            policy::cast_from_primitive::same_with_explicit : Allow implicit cast from the wrapped floating point primitive and explicit
-            cast from other floating point primitive.
+            <para>
+              <code>cast_from_primitive::more_precise</code>
+              : Allow implicit cast from floating point primitive with a precision
+              greater or equals to the precision of the wrapped type. The precision measured is
+              <code>std::numeric_limits&lt;FP&gt;::digits</code>
+            </para>
           </listitem>
           <listitem>
-            policy::cast_from_primitive::more_precise : Allow implicit cast from floating point primitive with a precision
-            greater or equals to the precision of the wrapped type. The precision measured is <code>std::numeric_limits&lt;FP&gt;::digits</code>
+            <para>
+              <code>cast_from_primitive::more_precise_explicit</code>
+              : Allow explicit cast from floating point primitive with a precision
+              greater or equals to the precision of the wrapped type. The precision measured is
+              <code>std::numeric_limits&lt;FP&gt;::digits</code>
+            </para>
           </listitem>
           <listitem>
-            policy::cast_from_primitive::more_precise_with_explicit : Allow implicit cast from floating point primitive with a precision
-            greater or equals to the precision of the wrapped type and explicit cast from other floating point primitive. 
-            The precision measured is <code>std::numeric_limits&lt;FP&gt;::digits</code>
+            <para>
+              <code>cast_from_primitive::less_precise</code>
+              : Allow implicit cast from floating point primitive with a precision
+              smaller or equals to the precision of the wrapped type. The precision measured is
+              <code>std::numeric_limits&lt;FP&gt;::digits</code>
+            </para>
           </listitem>
           <listitem>
-            policy::cast_from_primitive::less_precise : Allow implicit cast from floating point primitive with a precision
-            smaller or equals to the precision of the wrapped type. The precision measured is <code>std::numeric_limits&lt;FP&gt;::digits</code>
+            <para>
+              <code>cast_from_primitive::less_precise_explicit</code>
+              : Allow explicit cast from floating point primitive with a precision
+              smaller or equals to the precision of the wrapped type. The precision measured is
+              <code>std::numeric_limits&lt;FP&gt;::digits</code>
+            </para>
           </listitem>
           <listitem>
-            policy::cast_from_primitive::less_precise_with_explicit : Allow implicit cast from floating point primitive with a precision
-            smaller or equals to the precision of the wrapped type and explicit cast from other floating point primitive.
-            The precision measured is <code>std::numeric_limits&lt;FP&gt;::digits</code>
+            <para>
+              <code>cast_from_primitive::all</code>
+              : Allow implicit cast from every floating point primitive.
+            </para>
           </listitem>
           <listitem>
-            policy::cast_from_primitive::all : Allow implicit cast from every floating point primitive.
+            <para>
+              <code>cast_from_primitive::all_explicit</code>
+              : Allow explicit cast from every floating point primitive.
+            </para>
           </listitem>
           <listitem>
-            policy::allow_cast_from&lt;T&gt; : Allow implicit cast from T.
+            <para>
+              <code>allow_cast_from&lt;T&gt;</code>
+              : Allow implicit cast from T. The wrapped floating point type must be
+              constructible from type T.
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              <code>allow_explicit_cast_from&lt;T&gt;</code>
+              : Allow explicit cast from T. The wrapped floating point type must be
+              constructible from type T.
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              <code>cast_to_primitive::none</code>
+              : Doesn't allow cast to any floating point primitive.
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              <code>cast_to_primitive::same</code>
+              : Allow implicit cast to the wrapped floating point primitive.
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              <code>cast_to_primitive::same_explicit</code>
+              : Allow explicit cast to the wrapped floating point primitive.
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              <code>cast_to_primitive::more_precise</code>
+              : Allow implicit cast to floating point primitive with a precision
+              greater or equals to the precision of the wrapped type. The precision measured is
+              <code>std::numeric_limits&lt;FP&gt;::digits</code>
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              <code>cast_to_primitive::more_precise_explicit</code>
+              : Allow explicit cast to floating point primitive with a precision
+              greater or equals to the precision of the wrapped type. The precision measured is
+              <code>std::numeric_limits&lt;FP&gt;::digits</code>
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              <code>cast_to_primitive::less_precise</code>
+              : Allow implicit cast to floating point primitive with a precision
+              smaller or equals to the precision of the wrapped type. The precision measured is
+              <code>std::numeric_limits&lt;FP&gt;::digits</code>
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              <code>cast_to_primitive::less_precise_explicit</code>
+              : Allow explicit cast to floating point primitive with a precision
+              smaller or equals to the precision of the wrapped type. The precision measured is
+              <code>std::numeric_limits&lt;FP&gt;::digits</code>
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              <code>cast_to_primitive::all</code>
+              : Allow implicit cast to every floating point primitive.
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              <code>cast_to_primitive::all_explicit</code>
+              : Allow explicit cast to every floating point primitive.
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              <code>allow_cast_to&lt;T&gt;</code>
+              : Allow implicit cast to T. The wrapped floating point type must be
+              convertible to type T.
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              <code>allow_explicit_cast_to&lt;T&gt;</code>
+              : Allow explicit cast to T. The wrapped floating point type must be
+              convertible to type T.
+            </para>
           </listitem>
         </itemizedlist>
       </section>
