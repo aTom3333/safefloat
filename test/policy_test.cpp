@@ -383,12 +383,12 @@ template<typename FP>
 struct policy4 {};
 
 template<typename FP>
-using composed1 = boost::safe_float::policy::compose_check<FP, policy1, policy2>;
+using composed1 = boost::safe_float::policy::compose_check<policy1, policy2>::policy<FP>;
 template<typename FP>
-using composed2 = boost::safe_float::policy::compose_check<FP, policy3, policy4>;
+using composed2 = boost::safe_float::policy::compose_check<policy3, policy4>::policy<FP>;
 
 template<typename FP>
-using composed_all = boost::safe_float::policy::compose_check<FP, composed1, composed2>;
+using composed_all = boost::safe_float::policy::compose_check<composed1, composed2>::policy<FP>;
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(safe_float_check_composed_type, FPT, test_types)
 {
@@ -396,14 +396,14 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(safe_float_check_composed_type, FPT, test_types)
     
     // Composition of composition is flattened
     BOOST_CHECK((std::is_same_v<composed_all<FPT>,
-                                compose_check<FPT, policy1, policy2, policy3, policy4>>));
+                                compose_check<policy1, policy2, policy3, policy4>::policy<FPT>>));
     
-    BOOST_CHECK((std::is_same_v<compose_check<FPT, composed1, policy3>,
-                                compose_check<FPT, policy1, policy2, policy3>>));
+    BOOST_CHECK((std::is_same_v<compose_check<composed1, policy3>::policy<FPT>,
+                                compose_check<policy1, policy2, policy3>::policy<FPT>>));
     
     // Duplicates are removed
-    BOOST_CHECK((std::is_same_v<compose_check<FPT, policy2, composed2, composed_all>,
-                                compose_check<FPT, policy2, policy3, policy4, policy1>>));
+    BOOST_CHECK((std::is_same_v<compose_check<policy2, composed2, composed_all>::policy<FPT>,
+                                compose_check<policy2, policy3, policy4, policy1>::policy<FPT>>));
 }
 
 BOOST_AUTO_TEST_SUITE_END() //check composed policies

@@ -814,6 +814,473 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_explicit_cast_to_int, FPT, test_types)
     BOOST_CHECK_EQUAL(d, sd.get_stored_value());
 }
 
+BOOST_AUTO_TEST_CASE_TEMPLATE( safe_float_explicit_cast_from_safe, FPT, test_types){
+    // base values
+    using base_sf = safe_float<FPT, policy::check_bothflow>;
+    base_sf a((FPT)0.0);
+    base_sf b((FPT)1.0);
+    
+    //create safe version of the values
+    using sf = safe_float<FPT, policy::check_underflow, policy::on_fail_throw, policy::cast_from_safe_policy::more_restrictive>;
+    
+    sf sa = a;
+    sf sb = b;
+
+    BOOST_CHECK((std::is_convertible_v<base_sf, sf>));
+    BOOST_CHECK((std::is_constructible_v<sf, base_sf>));
+    
+    //check the values match when obtaining the stored value
+    BOOST_CHECK_EQUAL(a.get_stored_value(), sa.get_stored_value());
+    BOOST_CHECK_EQUAL(b.get_stored_value(), sb.get_stored_value());
+}
+
+template<typename FP, template<typename> typename CAST>
+using sf_all = safe_float<FP, policy::check_all, policy::on_fail_throw, CAST>;
+
+template<typename FP, template<typename> typename CAST>
+using sf_of = safe_float<FP, policy::check_overflow, policy::on_fail_throw, CAST>;
+
+template<typename FP, template<typename> typename CAST>
+using sf_add1 = safe_float<FP, policy::compose_check<policy::check_addition_overflow, policy::check_addition_invalid_result>::policy, policy::on_fail_throw, CAST>;
+
+template<typename FP, template<typename> typename CAST>
+using sf_add2 = safe_float<FP, policy::compose_check<policy::check_addition_invalid_result, policy::check_addition_overflow>::policy, policy::on_fail_throw, CAST>;
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(safe_float_cast_from_safe_more_restrictive, FPT, test_types) {
+    using source_all = sf_all<FPT, policy::cast_none>;
+    using source_of = sf_of<FPT, policy::cast_none>;
+    using source_add1 = sf_add1<FPT, policy::cast_none>;
+    using source_add2 = sf_add2<FPT, policy::cast_none>;
+
+    using target_all = sf_all<FPT, policy::cast_from_safe_policy::more_restrictive>;
+    using target_of = sf_of<FPT, policy::cast_from_safe_policy::more_restrictive>;
+    using target_add1 = sf_add1<FPT, policy::cast_from_safe_policy::more_restrictive>;
+    using target_add2 = sf_add2<FPT, policy::cast_from_safe_policy::more_restrictive>;
+    
+    BOOST_CHECK((std::is_convertible_v<source_all, target_all>));
+    BOOST_CHECK((std::is_convertible_v<source_all, target_of>));
+    BOOST_CHECK((std::is_convertible_v<source_all, target_add1>));
+    BOOST_CHECK((std::is_convertible_v<source_all, target_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_all, source_all>));
+    BOOST_CHECK((std::is_constructible_v<target_of, source_all>));
+    BOOST_CHECK((std::is_constructible_v<target_add1, source_all>));
+    BOOST_CHECK((std::is_constructible_v<target_add2, source_all>));
+
+    BOOST_CHECK((not std::is_convertible_v<source_of, target_all>));
+    BOOST_CHECK((std::is_convertible_v<source_of, target_of>));
+    BOOST_CHECK((not std::is_convertible_v<source_of, target_add1>));
+    BOOST_CHECK((not std::is_convertible_v<source_of, target_add2>));
+    BOOST_CHECK((not std::is_constructible_v<target_all, source_of>));
+    BOOST_CHECK((std::is_constructible_v<target_of, source_of>));
+    BOOST_CHECK((not std::is_constructible_v<target_add1, source_of>));
+    BOOST_CHECK((not std::is_constructible_v<target_add2, source_of>));
+
+    BOOST_CHECK((not std::is_convertible_v<source_add1, target_all>));
+    BOOST_CHECK((not std::is_convertible_v<source_add1, target_of>));
+    BOOST_CHECK((std::is_convertible_v<source_add1, target_add1>));
+    BOOST_CHECK((std::is_convertible_v<source_add1, target_add2>));
+    BOOST_CHECK((not std::is_constructible_v<target_all, source_add1>));
+    BOOST_CHECK((not std::is_constructible_v<target_of, source_add1>));
+    BOOST_CHECK((std::is_constructible_v<target_add1, source_add1>));
+    BOOST_CHECK((std::is_constructible_v<target_add2, source_add1>));
+
+    BOOST_CHECK((not std::is_convertible_v<source_add2, target_all>));
+    BOOST_CHECK((not std::is_convertible_v<source_add2, target_of>));
+    BOOST_CHECK((std::is_convertible_v<source_add2, target_add1>));
+    BOOST_CHECK((std::is_convertible_v<source_add2, target_add2>));
+    BOOST_CHECK((not std::is_constructible_v<target_all, source_add2>));
+    BOOST_CHECK((not std::is_constructible_v<target_of, source_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_add1, source_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_add2, source_add2>));
+}
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(safe_float_cast_from_safe_more_restrictive_explicit, FPT, test_types) {
+    using source_all = sf_all<FPT, policy::cast_none>;
+    using source_of = sf_of<FPT, policy::cast_none>;
+    using source_add1 = sf_add1<FPT, policy::cast_none>;
+    using source_add2 = sf_add2<FPT, policy::cast_none>;
+
+    using target_all = sf_all<FPT, policy::cast_from_safe_policy::more_restrictive_explicit>;
+    using target_of = sf_of<FPT, policy::cast_from_safe_policy::more_restrictive_explicit>;
+    using target_add1 = sf_add1<FPT, policy::cast_from_safe_policy::more_restrictive_explicit>;
+    using target_add2 = sf_add2<FPT, policy::cast_from_safe_policy::more_restrictive_explicit>;
+
+    BOOST_CHECK((not std::is_convertible_v<source_all, target_all>));
+    BOOST_CHECK((not std::is_convertible_v<source_all, target_of>));
+    BOOST_CHECK((not std::is_convertible_v<source_all, target_add1>));
+    BOOST_CHECK((not std::is_convertible_v<source_all, target_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_all, source_all>));
+    BOOST_CHECK((std::is_constructible_v<target_of, source_all>));
+    BOOST_CHECK((std::is_constructible_v<target_add1, source_all>));
+    BOOST_CHECK((std::is_constructible_v<target_add2, source_all>));
+
+    BOOST_CHECK((not std::is_convertible_v<source_of, target_all>));
+    BOOST_CHECK((not std::is_convertible_v<source_of, target_of>));
+    BOOST_CHECK((not std::is_convertible_v<source_of, target_add1>));
+    BOOST_CHECK((not std::is_convertible_v<source_of, target_add2>));
+    BOOST_CHECK((not std::is_constructible_v<target_all, source_of>));
+    BOOST_CHECK((std::is_constructible_v<target_of, source_of>));
+    BOOST_CHECK((not std::is_constructible_v<target_add1, source_of>));
+    BOOST_CHECK((not std::is_constructible_v<target_add2, source_of>));
+
+    BOOST_CHECK((not std::is_convertible_v<source_add1, target_all>));
+    BOOST_CHECK((not std::is_convertible_v<source_add1, target_of>));
+    BOOST_CHECK((not std::is_convertible_v<source_add1, target_add1>));
+    BOOST_CHECK((not std::is_convertible_v<source_add1, target_add2>));
+    BOOST_CHECK((not std::is_constructible_v<target_all, source_add1>));
+    BOOST_CHECK((not std::is_constructible_v<target_of, source_add1>));
+    BOOST_CHECK((std::is_constructible_v<target_add1, source_add1>));
+    BOOST_CHECK((std::is_constructible_v<target_add2, source_add1>));
+
+    BOOST_CHECK((not std::is_convertible_v<source_add2, target_all>));
+    BOOST_CHECK((not std::is_convertible_v<source_add2, target_of>));
+    BOOST_CHECK((not std::is_convertible_v<source_add2, target_add1>));
+    BOOST_CHECK((not std::is_convertible_v<source_add2, target_add2>));
+    BOOST_CHECK((not std::is_constructible_v<target_all, source_add2>));
+    BOOST_CHECK((not std::is_constructible_v<target_of, source_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_add1, source_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_add2, source_add2>));
+}
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(safe_float_cast_from_safe_less_restrictive, FPT, test_types) {
+    using source_all = sf_all<FPT, policy::cast_none>;
+    using source_of = sf_of<FPT, policy::cast_none>;
+    using source_add1 = sf_add1<FPT, policy::cast_none>;
+    using source_add2 = sf_add2<FPT, policy::cast_none>;
+
+    using target_all = sf_all<FPT, policy::cast_from_safe_policy::less_restrictive>;
+    using target_of = sf_of<FPT, policy::cast_from_safe_policy::less_restrictive>;
+    using target_add1 = sf_add1<FPT, policy::cast_from_safe_policy::less_restrictive>;
+    using target_add2 = sf_add2<FPT, policy::cast_from_safe_policy::less_restrictive>;
+
+    BOOST_CHECK((std::is_convertible_v<source_all, target_all>));
+    BOOST_CHECK((not std::is_convertible_v<source_all, target_of>));
+    BOOST_CHECK((not std::is_convertible_v<source_all, target_add1>));
+    BOOST_CHECK((not std::is_convertible_v<source_all, target_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_all, source_all>));
+    BOOST_CHECK((not std::is_constructible_v<target_of, source_all>));
+    BOOST_CHECK((not std::is_constructible_v<target_add1, source_all>));
+    BOOST_CHECK((not std::is_constructible_v<target_add2, source_all>));
+
+    BOOST_CHECK((std::is_convertible_v<source_of, target_all>));
+    BOOST_CHECK((std::is_convertible_v<source_of, target_of>));
+    BOOST_CHECK((not std::is_convertible_v<source_of, target_add1>));
+    BOOST_CHECK((not std::is_convertible_v<source_of, target_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_all, source_of>));
+    BOOST_CHECK((std::is_constructible_v<target_of, source_of>));
+    BOOST_CHECK((not std::is_constructible_v<target_add1, source_of>));
+    BOOST_CHECK((not std::is_constructible_v<target_add2, source_of>));
+
+    BOOST_CHECK((std::is_convertible_v<source_add1, target_all>));
+    BOOST_CHECK((not std::is_convertible_v<source_add1, target_of>));
+    BOOST_CHECK((std::is_convertible_v<source_add1, target_add1>));
+    BOOST_CHECK((std::is_convertible_v<source_add1, target_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_all, source_add1>));
+    BOOST_CHECK((not std::is_constructible_v<target_of, source_add1>));
+    BOOST_CHECK((std::is_constructible_v<target_add1, source_add1>));
+    BOOST_CHECK((std::is_constructible_v<target_add2, source_add1>));
+
+    BOOST_CHECK((std::is_convertible_v<source_add2, target_all>));
+    BOOST_CHECK((not std::is_convertible_v<source_add2, target_of>));
+    BOOST_CHECK((std::is_convertible_v<source_add2, target_add1>));
+    BOOST_CHECK((std::is_convertible_v<source_add2, target_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_all, source_add2>));
+    BOOST_CHECK((not std::is_constructible_v<target_of, source_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_add1, source_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_add2, source_add2>));
+}
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(safe_float_cast_from_safe_less_restrictive_explicit, FPT, test_types) {
+    using source_all = sf_all<FPT, policy::cast_none>;
+    using source_of = sf_of<FPT, policy::cast_none>;
+    using source_add1 = sf_add1<FPT, policy::cast_none>;
+    using source_add2 = sf_add2<FPT, policy::cast_none>;
+
+    using target_all = sf_all<FPT, policy::cast_from_safe_policy::less_restrictive_explicit>;
+    using target_of = sf_of<FPT, policy::cast_from_safe_policy::less_restrictive_explicit>;
+    using target_add1 = sf_add1<FPT, policy::cast_from_safe_policy::less_restrictive_explicit>;
+    using target_add2 = sf_add2<FPT, policy::cast_from_safe_policy::less_restrictive_explicit>;
+
+    BOOST_CHECK((not std::is_convertible_v<source_all, target_all>));
+    BOOST_CHECK((not std::is_convertible_v<source_all, target_of>));
+    BOOST_CHECK((not std::is_convertible_v<source_all, target_add1>));
+    BOOST_CHECK((not std::is_convertible_v<source_all, target_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_all, source_all>));
+    BOOST_CHECK((not std::is_constructible_v<target_of, source_all>));
+    BOOST_CHECK((not std::is_constructible_v<target_add1, source_all>));
+    BOOST_CHECK((not std::is_constructible_v<target_add2, source_all>));
+
+    BOOST_CHECK((not std::is_convertible_v<source_of, target_all>));
+    BOOST_CHECK((not std::is_convertible_v<source_of, target_of>));
+    BOOST_CHECK((not std::is_convertible_v<source_of, target_add1>));
+    BOOST_CHECK((not std::is_convertible_v<source_of, target_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_all, source_of>));
+    BOOST_CHECK((std::is_constructible_v<target_of, source_of>));
+    BOOST_CHECK((not std::is_constructible_v<target_add1, source_of>));
+    BOOST_CHECK((not std::is_constructible_v<target_add2, source_of>));
+
+    BOOST_CHECK((not std::is_convertible_v<source_add1, target_all>));
+    BOOST_CHECK((not std::is_convertible_v<source_add1, target_of>));
+    BOOST_CHECK((not std::is_convertible_v<source_add1, target_add1>));
+    BOOST_CHECK((not std::is_convertible_v<source_add1, target_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_all, source_add1>));
+    BOOST_CHECK((not std::is_constructible_v<target_of, source_add1>));
+    BOOST_CHECK((std::is_constructible_v<target_add1, source_add1>));
+    BOOST_CHECK((std::is_constructible_v<target_add2, source_add1>));
+
+    BOOST_CHECK((not std::is_convertible_v<source_add2, target_all>));
+    BOOST_CHECK((not std::is_convertible_v<source_add2, target_of>));
+    BOOST_CHECK((not std::is_convertible_v<source_add2, target_add1>));
+    BOOST_CHECK((not std::is_convertible_v<source_add2, target_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_all, source_add2>));
+    BOOST_CHECK((not std::is_constructible_v<target_of, source_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_add1, source_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_add2, source_add2>));
+}
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(safe_float_cast_from_safe_equivalent, FPT, test_types) {
+    using source_all = sf_all<FPT, policy::cast_none>;
+    using source_of = sf_of<FPT, policy::cast_none>;
+    using source_add1 = sf_add1<FPT, policy::cast_none>;
+    using source_add2 = sf_add2<FPT, policy::cast_none>;
+
+    using target_all = sf_all<FPT, policy::cast_from_safe_policy::equivalent>;
+    using target_of = sf_of<FPT, policy::cast_from_safe_policy::equivalent>;
+    using target_add1 = sf_add1<FPT, policy::cast_from_safe_policy::equivalent>;
+    using target_add2 = sf_add2<FPT, policy::cast_from_safe_policy::equivalent>;
+
+    BOOST_CHECK((std::is_convertible_v<source_all, target_all>));
+    BOOST_CHECK((not std::is_convertible_v<source_all, target_of>));
+    BOOST_CHECK((not std::is_convertible_v<source_all, target_add1>));
+    BOOST_CHECK((not std::is_convertible_v<source_all, target_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_all, source_all>));
+    BOOST_CHECK((not std::is_constructible_v<target_of, source_all>));
+    BOOST_CHECK((not std::is_constructible_v<target_add1, source_all>));
+    BOOST_CHECK((not std::is_constructible_v<target_add2, source_all>));
+
+    BOOST_CHECK((not std::is_convertible_v<source_of, target_all>));
+    BOOST_CHECK((std::is_convertible_v<source_of, target_of>));
+    BOOST_CHECK((not std::is_convertible_v<source_of, target_add1>));
+    BOOST_CHECK((not std::is_convertible_v<source_of, target_add2>));
+    BOOST_CHECK((not std::is_constructible_v<target_all, source_of>));
+    BOOST_CHECK((std::is_constructible_v<target_of, source_of>));
+    BOOST_CHECK((not std::is_constructible_v<target_add1, source_of>));
+    BOOST_CHECK((not std::is_constructible_v<target_add2, source_of>));
+
+    BOOST_CHECK((not std::is_convertible_v<source_add1, target_all>));
+    BOOST_CHECK((not std::is_convertible_v<source_add1, target_of>));
+    BOOST_CHECK((std::is_convertible_v<source_add1, target_add1>));
+    BOOST_CHECK((std::is_convertible_v<source_add1, target_add2>));
+    BOOST_CHECK((not std::is_constructible_v<target_all, source_add1>));
+    BOOST_CHECK((not std::is_constructible_v<target_of, source_add1>));
+    BOOST_CHECK((std::is_constructible_v<target_add1, source_add1>));
+    BOOST_CHECK((std::is_constructible_v<target_add2, source_add1>));
+
+    BOOST_CHECK((not std::is_convertible_v<source_add2, target_all>));
+    BOOST_CHECK((not std::is_convertible_v<source_add2, target_of>));
+    BOOST_CHECK((std::is_convertible_v<source_add2, target_add1>));
+    BOOST_CHECK((std::is_convertible_v<source_add2, target_add2>));
+    BOOST_CHECK((not std::is_constructible_v<target_all, source_add2>));
+    BOOST_CHECK((not std::is_constructible_v<target_of, source_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_add1, source_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_add2, source_add2>));
+}
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(safe_float_cast_from_safe_equivalent_explicit, FPT, test_types) {
+    using source_all = sf_all<FPT, policy::cast_none>;
+    using source_of = sf_of<FPT, policy::cast_none>;
+    using source_add1 = sf_add1<FPT, policy::cast_none>;
+    using source_add2 = sf_add2<FPT, policy::cast_none>;
+
+    using target_all = sf_all<FPT, policy::cast_from_safe_policy::equivalent_explicit>;
+    using target_of = sf_of<FPT, policy::cast_from_safe_policy::equivalent_explicit>;
+    using target_add1 = sf_add1<FPT, policy::cast_from_safe_policy::equivalent_explicit>;
+    using target_add2 = sf_add2<FPT, policy::cast_from_safe_policy::equivalent_explicit>;
+
+    BOOST_CHECK((not std::is_convertible_v<source_all, target_all>));
+    BOOST_CHECK((not std::is_convertible_v<source_all, target_of>));
+    BOOST_CHECK((not std::is_convertible_v<source_all, target_add1>));
+    BOOST_CHECK((not std::is_convertible_v<source_all, target_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_all, source_all>));
+    BOOST_CHECK((not std::is_constructible_v<target_of, source_all>));
+    BOOST_CHECK((not std::is_constructible_v<target_add1, source_all>));
+    BOOST_CHECK((not std::is_constructible_v<target_add2, source_all>));
+
+    BOOST_CHECK((not std::is_convertible_v<source_of, target_all>));
+    BOOST_CHECK((not std::is_convertible_v<source_of, target_of>));
+    BOOST_CHECK((not std::is_convertible_v<source_of, target_add1>));
+    BOOST_CHECK((not std::is_convertible_v<source_of, target_add2>));
+    BOOST_CHECK((not std::is_constructible_v<target_all, source_of>));
+    BOOST_CHECK((std::is_constructible_v<target_of, source_of>));
+    BOOST_CHECK((not std::is_constructible_v<target_add1, source_of>));
+    BOOST_CHECK((not std::is_constructible_v<target_add2, source_of>));
+
+    BOOST_CHECK((not std::is_convertible_v<source_add1, target_all>));
+    BOOST_CHECK((not std::is_convertible_v<source_add1, target_of>));
+    BOOST_CHECK((not std::is_convertible_v<source_add1, target_add1>));
+    BOOST_CHECK((not std::is_convertible_v<source_add1, target_add2>));
+    BOOST_CHECK((not std::is_constructible_v<target_all, source_add1>));
+    BOOST_CHECK((not std::is_constructible_v<target_of, source_add1>));
+    BOOST_CHECK((std::is_constructible_v<target_add1, source_add1>));
+    BOOST_CHECK((std::is_constructible_v<target_add2, source_add1>));
+
+    BOOST_CHECK((not std::is_convertible_v<source_add2, target_all>));
+    BOOST_CHECK((not std::is_convertible_v<source_add2, target_of>));
+    BOOST_CHECK((not std::is_convertible_v<source_add2, target_add1>));
+    BOOST_CHECK((not std::is_convertible_v<source_add2, target_add2>));
+    BOOST_CHECK((not std::is_constructible_v<target_all, source_add2>));
+    BOOST_CHECK((not std::is_constructible_v<target_of, source_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_add1, source_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_add2, source_add2>));
+}
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(safe_float_cast_from_safe_all, FPT, test_types) {
+    using source_all = sf_all<FPT, policy::cast_none>;
+    using source_of = sf_of<FPT, policy::cast_none>;
+    using source_add1 = sf_add1<FPT, policy::cast_none>;
+    using source_add2 = sf_add2<FPT, policy::cast_none>;
+
+    using target_all = sf_all<FPT, policy::cast_from_safe_policy::all>;
+    using target_of = sf_of<FPT, policy::cast_from_safe_policy::all>;
+    using target_add1 = sf_add1<FPT, policy::cast_from_safe_policy::all>;
+    using target_add2 = sf_add2<FPT, policy::cast_from_safe_policy::all>;
+
+    BOOST_CHECK((std::is_convertible_v<source_all, target_all>));
+    BOOST_CHECK((std::is_convertible_v<source_all, target_of>));
+    BOOST_CHECK((std::is_convertible_v<source_all, target_add1>));
+    BOOST_CHECK((std::is_convertible_v<source_all, target_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_all, source_all>));
+    BOOST_CHECK((std::is_constructible_v<target_of, source_all>));
+    BOOST_CHECK((std::is_constructible_v<target_add1, source_all>));
+    BOOST_CHECK((std::is_constructible_v<target_add2, source_all>));
+
+    BOOST_CHECK((std::is_convertible_v<source_of, target_all>));
+    BOOST_CHECK((std::is_convertible_v<source_of, target_of>));
+    BOOST_CHECK((std::is_convertible_v<source_of, target_add1>));
+    BOOST_CHECK((std::is_convertible_v<source_of, target_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_all, source_of>));
+    BOOST_CHECK((std::is_constructible_v<target_of, source_of>));
+    BOOST_CHECK((std::is_constructible_v<target_add1, source_of>));
+    BOOST_CHECK((std::is_constructible_v<target_add2, source_of>));
+
+    BOOST_CHECK((std::is_convertible_v<source_add1, target_all>));
+    BOOST_CHECK((std::is_convertible_v<source_add1, target_of>));
+    BOOST_CHECK((std::is_convertible_v<source_add1, target_add1>));
+    BOOST_CHECK((std::is_convertible_v<source_add1, target_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_all, source_add1>));
+    BOOST_CHECK((std::is_constructible_v<target_of, source_add1>));
+    BOOST_CHECK((std::is_constructible_v<target_add1, source_add1>));
+    BOOST_CHECK((std::is_constructible_v<target_add2, source_add1>));
+
+    BOOST_CHECK((std::is_convertible_v<source_add2, target_all>));
+    BOOST_CHECK((std::is_convertible_v<source_add2, target_of>));
+    BOOST_CHECK((std::is_convertible_v<source_add2, target_add1>));
+    BOOST_CHECK((std::is_convertible_v<source_add2, target_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_all, source_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_of, source_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_add1, source_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_add2, source_add2>));
+}
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(safe_float_cast_from_safe_all_explicit, FPT, test_types) {
+    using source_all = sf_all<FPT, policy::cast_none>;
+    using source_of = sf_of<FPT, policy::cast_none>;
+    using source_add1 = sf_add1<FPT, policy::cast_none>;
+    using source_add2 = sf_add2<FPT, policy::cast_none>;
+
+    using target_all = sf_all<FPT, policy::cast_from_safe_policy::all_explicit>;
+    using target_of = sf_of<FPT, policy::cast_from_safe_policy::all_explicit>;
+    using target_add1 = sf_add1<FPT, policy::cast_from_safe_policy::all_explicit>;
+    using target_add2 = sf_add2<FPT, policy::cast_from_safe_policy::all_explicit>;
+
+    BOOST_CHECK((not std::is_convertible_v<source_all, target_all>));
+    BOOST_CHECK((not std::is_convertible_v<source_all, target_of>));
+    BOOST_CHECK((not std::is_convertible_v<source_all, target_add1>));
+    BOOST_CHECK((not std::is_convertible_v<source_all, target_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_all, source_all>));
+    BOOST_CHECK((std::is_constructible_v<target_of, source_all>));
+    BOOST_CHECK((std::is_constructible_v<target_add1, source_all>));
+    BOOST_CHECK((std::is_constructible_v<target_add2, source_all>));
+
+    BOOST_CHECK((not std::is_convertible_v<source_of, target_all>));
+    BOOST_CHECK((not std::is_convertible_v<source_of, target_of>));
+    BOOST_CHECK((not std::is_convertible_v<source_of, target_add1>));
+    BOOST_CHECK((not std::is_convertible_v<source_of, target_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_all, source_of>));
+    BOOST_CHECK((std::is_constructible_v<target_of, source_of>));
+    BOOST_CHECK((std::is_constructible_v<target_add1, source_of>));
+    BOOST_CHECK((std::is_constructible_v<target_add2, source_of>));
+
+    BOOST_CHECK((not std::is_convertible_v<source_add1, target_all>));
+    BOOST_CHECK((not std::is_convertible_v<source_add1, target_of>));
+    BOOST_CHECK((not std::is_convertible_v<source_add1, target_add1>));
+    BOOST_CHECK((not std::is_convertible_v<source_add1, target_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_all, source_add1>));
+    BOOST_CHECK((std::is_constructible_v<target_of, source_add1>));
+    BOOST_CHECK((std::is_constructible_v<target_add1, source_add1>));
+    BOOST_CHECK((std::is_constructible_v<target_add2, source_add1>));
+
+    BOOST_CHECK((not std::is_convertible_v<source_add2, target_all>));
+    BOOST_CHECK((not std::is_convertible_v<source_add2, target_of>));
+    BOOST_CHECK((not std::is_convertible_v<source_add2, target_add1>));
+    BOOST_CHECK((not std::is_convertible_v<source_add2, target_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_all, source_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_of, source_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_add1, source_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_add2, source_add2>));
+}
+
+BOOST_AUTO_TEST_CASE(safe_float_cast_from_safe) {
+    using source_float_all = sf_all<float, policy::cast_none>;
+    using source_double_of = sf_of<double, policy::cast_none>;
+    using source_long_double_add1 = sf_add1<long double, policy::cast_none>;
+    using source_float_add2 = sf_add2<float, policy::cast_none>;
+    
+    // Test of some combination of criteria on floating point types and policies
+    using target_float_all = sf_all<float, policy::cast_from_safe<policy::cast_from_primitive::same, policy::cast_from_safe_policy::less_restrictive>::policy>;
+    using target_double_of = sf_of<double, policy::cast_from_safe<policy::cast_from_primitive::less_precise, policy::cast_from_safe_policy::more_restrictive>::policy>;
+    using target_double_add1 = sf_add1<double, policy::cast_from_safe<policy::cast_from_primitive::all, policy::cast_from_safe_policy::all>::policy>;
+    using target_long_double_add2 = sf_add2<long double, policy::cast_from_safe<policy::cast_from_primitive::more_precise, policy::cast_from_safe_policy::equivalent>::policy>;
+
+    BOOST_CHECK((std::is_convertible_v<source_float_all, target_float_all>));
+    BOOST_CHECK((std::is_convertible_v<source_float_all, target_double_of>));
+    BOOST_CHECK((std::is_convertible_v<source_float_all, target_double_add1>));
+    BOOST_CHECK((not std::is_convertible_v<source_float_all, target_long_double_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_float_all, source_float_all>));
+    BOOST_CHECK((std::is_constructible_v<target_double_of, source_float_all>));
+    BOOST_CHECK((std::is_constructible_v<target_double_add1, source_float_all>));
+    BOOST_CHECK((not std::is_constructible_v<target_long_double_add2, source_float_all>));
+
+    BOOST_CHECK((not std::is_convertible_v<source_double_of, target_float_all>));
+    BOOST_CHECK((std::is_convertible_v<source_double_of, target_double_of>));
+    BOOST_CHECK((std::is_convertible_v<source_double_of, target_double_add1>));
+    BOOST_CHECK((not std::is_convertible_v<source_double_of, target_long_double_add2>));
+    BOOST_CHECK((not std::is_constructible_v<target_float_all, source_double_of>));
+    BOOST_CHECK((std::is_constructible_v<target_double_of, source_double_of>));
+    BOOST_CHECK((std::is_constructible_v<target_double_add1, source_double_of>));
+    BOOST_CHECK((not std::is_constructible_v<target_long_double_add2, source_double_of>));
+
+    BOOST_CHECK((not std::is_convertible_v<source_long_double_add1, target_float_all>));
+    BOOST_CHECK((not std::is_convertible_v<source_long_double_add1, target_double_of>));
+    BOOST_CHECK((std::is_convertible_v<source_long_double_add1, target_double_add1>));
+    BOOST_CHECK((std::is_convertible_v<source_long_double_add1, target_long_double_add2>));
+    BOOST_CHECK((not std::is_constructible_v<target_float_all, source_long_double_add1>));
+    BOOST_CHECK((not std::is_constructible_v<target_double_of, source_long_double_add1>));
+    BOOST_CHECK((std::is_constructible_v<target_double_add1, source_long_double_add1>));
+    BOOST_CHECK((std::is_constructible_v<target_long_double_add2, source_long_double_add1>));
+
+    BOOST_CHECK((std::is_convertible_v<source_float_add2, target_float_all>));
+    BOOST_CHECK((not std::is_convertible_v<source_float_add2, target_double_of>));
+    BOOST_CHECK((std::is_convertible_v<source_float_add2, target_double_add1>));
+    BOOST_CHECK((not std::is_convertible_v<source_float_add2, target_long_double_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_float_all, source_float_add2>));
+    BOOST_CHECK((not std::is_constructible_v<target_double_of, source_float_add2>));
+    BOOST_CHECK((std::is_constructible_v<target_double_add1, source_float_add2>));
+    BOOST_CHECK((not std::is_constructible_v<target_long_double_add2, source_float_add2>));
+    
+    static_assert(not policy::cast_from_safe<policy::cast_from_primitive::all, policy::cast_from_safe_policy::all>::policy<target_double_add1>::can_explicitly_cast_from<double>);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 

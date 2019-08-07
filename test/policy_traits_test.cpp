@@ -78,5 +78,23 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(safe_float_policy_traits_full_policy, FPT, test_ty
 
 BOOST_AUTO_TEST_SUITE_END() // policy_traits full policy
 
+BOOST_AUTO_TEST_SUITE(safe_float_policy_subset_test_suite)
+BOOST_AUTO_TEST_CASE_TEMPLATE(safe_float_policy_subset, FPT, test_types)
+{
+    BOOST_CHECK((policy::is_subset<policy::check_addition_overflow<FPT>, policy::check_addition_overflow<FPT>>::value));
+    BOOST_CHECK((policy::is_subset<policy::check_addition_overflow<FPT>, policy::check_all<FPT>>::value));
+    BOOST_CHECK((policy::is_subset<policy::check_underflow<FPT>, policy::check_all<FPT>>::value));
+    BOOST_CHECK((policy::is_subset<policy::check_all<FPT>, policy::check_all<FPT>>::value));
+    BOOST_CHECK((not policy::is_subset<policy::check_all<FPT>, policy::check_bothflow<FPT>>::value));
+    BOOST_CHECK((not policy::is_subset<policy::check_invalid_result<FPT>, policy::check_addition_invalid_result<FPT>>::value));
+    
+    BOOST_CHECK((policy::is_subset<
+        policy::compose_check<policy::check_addition_overflow, policy::check_subtraction_overflow>::policy<FPT>, 
+        policy::compose_check<policy::check_subtraction_overflow, policy::check_addition_overflow>::policy<FPT>
+        >::value));
+}
+
+BOOST_AUTO_TEST_SUITE_END() // policy subset
+
 BOOST_AUTO_TEST_SUITE_END() // policy_traits
 BOOST_AUTO_TEST_SUITE_END() // policy

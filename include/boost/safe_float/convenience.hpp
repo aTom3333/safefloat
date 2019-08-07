@@ -13,6 +13,7 @@
 #include <boost/safe_float/policy/cast_to.hpp>
 #include <boost/safe_float/policy/cast_from_primitive.hpp>
 #include <boost/safe_float/policy/cast_to_primitive.hpp>
+#include <boost/safe_float/policy/cast_from_safe.hpp>
 
 //composed policies
 #include <boost/safe_float/policy/policy_composers.hpp>
@@ -47,43 +48,38 @@ template<class FP>
 using placeholder=check_policy<FP>;  //remove when other depend on the right compositions
 
 template<class FP>
-using check_overflow = compose_check<FP,
-                                    check_addition_overflow,
+using check_overflow = compose_check<check_addition_overflow,
                                     check_subtraction_overflow,
                                     check_division_overflow,
-                                    check_multiplication_overflow>;
+                                    check_multiplication_overflow>::policy<FP>;
 
 template<class FP>
-using check_underflow = compose_check<FP,
-                                    check_addition_underflow,
+using check_underflow = compose_check<check_addition_underflow,
                                     check_subtraction_underflow,
                                     check_division_underflow,
-                                    check_multiplication_underflow>;
+                                    check_multiplication_underflow>::policy<FP>;
 
 template<class FP>
-using check_invalid_result = compose_check<FP,
-                                check_addition_invalid_result,
+using check_invalid_result = compose_check<check_addition_invalid_result,
                                 check_subtraction_invalid_result,
                                 check_division_invalid_result,
-                                check_multiplication_invalid_result>;
+                                check_multiplication_invalid_result>::policy<FP>;
 
 template<class FP>
-using check_inexact_rounding = compose_check<FP,
-                                            check_addition_inexact,
+using check_inexact_rounding = compose_check<check_addition_inexact,
                                             check_subtraction_inexact,
                                             check_division_inexact,
-                                            check_multiplication_inexact>;
+                                            check_multiplication_inexact>::policy<FP>;
 
 template<class FP>
-using check_bothflow = compose_check<FP, check_overflow, check_underflow>;
+using check_bothflow = compose_check<check_overflow, check_underflow>::policy<FP>;
 
 template<class FP>
-using check_all = compose_check<FP,
-                                check_overflow,
+using check_all = compose_check<check_overflow,
                                 check_underflow,
                                 check_inexact_rounding,
                                 check_invalid_result,
-                                check_division_by_zero>;
+                                check_division_by_zero>::policy<FP>;
 }
 }
 }

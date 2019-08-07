@@ -93,8 +93,11 @@ public:
     }
 };
 
-template<typename FP, template<typename> typename... As>
-using compose_check = flattener<composed_check>::template compose_flat<FP, As...>;
+template<template<typename> typename... POLICIES>
+struct compose_check {
+    template<typename FP>
+    using policy = flattener<composed_check>::template compose_flat<FP, POLICIES...>;
+};
 
 // Specialization of policy_traits to report the correct message
 template<typename FP, template<typename> typename... As>
@@ -170,8 +173,11 @@ struct composed_cast
                                                    && !can_cast_to<T>;
 };
 
-template<typename FP, template<typename> typename... As>
-using compose_cast = flattener<composed_cast>::template compose_flat<FP, As...>;
+template<template<typename> typename... POLICIES>
+struct compose_cast {
+    template<typename FP>
+    using policy = flattener<composed_cast>::template compose_flat<FP, POLICIES...>;
+};
 
 namespace helper
 {
