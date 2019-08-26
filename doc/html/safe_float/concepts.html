@@ -4,8 +4,8 @@
 <title>Concepts</title>
 <link rel="stylesheet" href="../boostbook.css" type="text/css">
 <meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
-<link rel="home" href="../index.html" title="Chapter&#160;1.&#160;safe_float">
-<link rel="up" href="../index.html" title="Chapter&#160;1.&#160;safe_float">
+<link rel="home" href="../index.html" title="Chapter&#160;1.&#160; safe_float">
+<link rel="up" href="../index.html" title="Chapter&#160;1.&#160; safe_float">
 <link rel="prev" href="notes.html" title="Notes">
 <link rel="next" href="types.html" title="Types">
 </head>
@@ -17,45 +17,356 @@
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
 <a name="safe_float.concepts"></a>Concepts</h2></div></div></div>
 <div class="toc"><dl>
-<dt><span class="section"><a href="concepts.html#idm260015741824">Policy classes</a></span></dt>
-<dt><span class="section"><a href="concepts.html#idm260015738320">Reporter classes</a></span></dt>
+<dt><span class="section"><a href="concepts.html#idm124">CHECK</a></span></dt>
+<dt><span class="section"><a href="concepts.html#idm230">REPORT</a></span></dt>
+<dt><span class="section"><a href="concepts.html#idm270">CAST</a></span></dt>
 </dl></div>
-<p>The architecture is based in policies.</p>
+<p>The architecture is based in policies. They are three types of policies, the CHECK policies, the REPORT policies and the CAST policies.
+    Each type of policy have its requirements modeled by a concept</p>
 <div class="section">
 <div class="titlepage"><div><div><h3 class="title">
-<a name="idm260015741824"></a>Policy classes</h3></div></div></div>
-<p>Policies define how a check is performed and calls the reporter for notification when check fails. 
-      The reporter class is received by template parameter. </p>
-<div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
-<p>CHECK policies receive a template parameter with the wrapped
-          floating point datatype and implement the validations as pair of
-          functions: pre_operator_check and post_operator_check. Each operator
-          calls the pre and post checks defined. Post conditions are those
-          doing the actual validation, pre conditions are used to collect
-          required information for evaluating the post condition and setup of
-          flags if required.</p>
-<p>CHECK policies also receive a template parameter with a reporter class.
-          The static method report is called on the reporter class when a check fails.</p>
-</li></ul></div>
+<a name="idm124"></a>CHECK</h3></div></div></div>
+<p>CHECK policies define how a check is performed
+      </p>
+<p>A <span class="bold"><strong>CHECK</strong></span> is a type template that is templatized by the type of floating pointer number
+      that will be used by the safe_float</p>
+<div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>CHECK policies receive a template parameter with the wrapped
+            floating point datatype and implement the validations as pair of
+            functions: pre_operator_check and post_operator_check. Each operator
+            calls the pre and post checks defined. Post conditions are those
+            doing the actual validation, pre conditions are used to collect
+            required information for evaluating the post condition and setup of
+            flags if required.
+          </p></li></ul></div>
+<span class="emphasis"><em>Requirements</em></span><div class="itemizedlist"><ul class="itemizedlist" type="disc">
+<li class="listitem">C is a type template meeting the requirements of a <span class="bold"><strong>CHECK</strong></span>.</li>
+<li class="listitem">FP is a that such that <code class="computeroutput">std::is_floating_point&lt;FP&gt;::value == true</code>.</li>
+<li class="listitem">check is a value of type C&lt;FP&gt;.</li>
+<li class="listitem">a, b and r are values of type FP</li>
+</ul></div>
+<div class="table">
+<a name="idm140"></a><p class="title"><b>Table&#160;1.1.&#160;Valid expressions</b></p>
+<div class="table-contents"><table class="table" summary="Valid expressions">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>Expression</th>
+<th>Type</th>
+<th>Required</th>
+<th>Semantics</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code class="computeroutput">C&lt;FP&gt;{};</code></td>
+<td>&#160;</td>
+<td>required</td>
+<td>Default constructor</td>
+</tr>
+<tr>
+<td><code class="computeroutput">check.pre_addition_check(a, b)</code></td>
+<td><code class="computeroutput">bool</code></td>
+<td>optional</td>
+<td>Called before the addition is performed, the two operands are given in parameter. Can be used 
+              to setup flags or other properties or to perform an early check. A return value of <code class="computeroutput">true</code> represents
+              a success and a return value of <code class="computeroutput">false</code> represents a failure.
+              If the method doesn't exist, nothing else is called to replace it and success is assumed.</td>
+</tr>
+<tr>
+<td><code class="computeroutput">check.post_addition_check(r)</code></td>
+<td><code class="computeroutput">bool</code></td>
+<td>optional</td>
+<td>Called after the addition is performed, the result is given as parameter.
+              Should detect if there has been an error. A return value of <code class="computeroutput">true</code> represents
+                a success and a return value of <code class="computeroutput">false</code> represents a failure.
+              If the method doesn't exist, nothing else is called to replace it and success is assumed.</td>
+</tr>
+<tr>
+<td><code class="computeroutput">check.pre_subtraction_check(a, b)</code></td>
+<td><code class="computeroutput">bool</code></td>
+<td>optional</td>
+<td>Called before the subtraction is performed, the two operands are given in parameter. Can be used 
+              to setup flags or other properties or to perform an early check. A return value of <code class="computeroutput">true</code> represents
+              a success and a return value of <code class="computeroutput">false</code> represents a failure.
+              If the method doesn't exist, nothing else is called to replace it and success is assumed.</td>
+</tr>
+<tr>
+<td><code class="computeroutput">check.post_subtraction_check(r)</code></td>
+<td><code class="computeroutput">bool</code></td>
+<td>optional</td>
+<td>Called after the subtraction is performed, the result is given as parameter.
+              Should detect if there has been an error. A return value of <code class="computeroutput">true</code> represents
+                a success and a return value of <code class="computeroutput">false</code> represents a failure.
+              If the method doesn't exist, nothing else is called to replace it and success is assumed.</td>
+</tr>
+<tr>
+<td><code class="computeroutput">check.pre_multiplication_check(a, b)</code></td>
+<td><code class="computeroutput">bool</code></td>
+<td>optional</td>
+<td>Called before the multiplication is performed, the two operands are given in parameter. Can be used 
+              to setup flags or other properties or to perform an early check. A return value of <code class="computeroutput">true</code> represents
+              a success and a return value of <code class="computeroutput">false</code> represents a failure.
+              If the method doesn't exist, nothing else is called to replace it and success is assumed.</td>
+</tr>
+<tr>
+<td><code class="computeroutput">check.post_multiplication_check(r)</code></td>
+<td><code class="computeroutput">bool</code></td>
+<td>optional</td>
+<td>Called after the multiplication is performed, the result is given as parameter.
+              Should detect if there has been an error. A return value of <code class="computeroutput">true</code> represents
+                a success and a return value of <code class="computeroutput">false</code> represents a failure.
+              If the method doesn't exist, nothing else is called to replace it and success is assumed.</td>
+</tr>
+<tr>
+<td><code class="computeroutput">check.pre_division_check(a, b)</code></td>
+<td><code class="computeroutput">bool</code></td>
+<td>optional</td>
+<td>Called before the division is performed, the two operands are given in parameter. Can be used 
+              to setup flags or other properties or to perform an early check. A return value of <code class="computeroutput">true</code> represents
+              a success and a return value of <code class="computeroutput">false</code> represents a failure.
+              If the method doesn't exist, nothing else is called to replace it and success is assumed.</td>
+</tr>
+<tr>
+<td><code class="computeroutput">check.post_division_check(r)</code></td>
+<td><code class="computeroutput">bool</code></td>
+<td>optional</td>
+<td>Called after the division is performed, the result is given as parameter.
+              Should detect if there has been an error. A return value of <code class="computeroutput">true</code> represents
+                a success and a return value of <code class="computeroutput">false</code> represents a failure.
+              If the method doesn't exist, nothing else is called to replace it and success is assumed.</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><span class="emphasis"><em>Example</em></span><pre class="programlisting">
+template&lt;typename FP&gt;
+struct Check {
+    // Example of a valid CHECK policy that would detect result equals to 0 as errors
+        
+    // Default connstructible
+    
+    bool pre_addition_check(FP a, FP B) {
+        return true;
+    }
+    bool post_addition_check(FP r) {
+        return r != FP(0);
+    }
+
+    bool pre_subtraction_check(FP a, FP B) {
+        return true;
+    }
+    bool post_subtraction_check(FP r) {
+        return r != FP(0);
+    }
+        
+    bool pre_multiplication_check(FP a, FP B) {
+        return true;
+    }
+    bool post_multiplication_check(FP r) {
+        return r != FP(0);
+    }
+        
+    bool pre_division_check(FP a, FP B) {
+        return true;
+    }
+    bool post_division_check(FP r) {
+        return r != FP(0);
+    }
+};</pre>
 </div>
 <div class="section">
 <div class="titlepage"><div><div><h3 class="title">
-<a name="idm260015738320"></a>Reporter classes</h3></div></div></div>
-<p>Reporter classes are used for reporting check failures in policies.</p>
-<span style="color: red">&lt;itemizedList&gt;
-        <span style="color: red">&lt;listitem&gt;<p>
-          The reporter classes define how the user would to be notified in the 
-          case a CHECK fails. A single static method is required from
-          these classes, report_failure on which a exception can be thrown, a
-          message can be output on std::cerr, a unexpected could be returned, 
-          an abort can be executed, or any other behavior decided by the user.</p>&lt;/listitem&gt;</span>
-      &lt;/itemizedList&gt;</span>
+<a name="idm230"></a>REPORT</h3></div></div></div>
+<p>REPORT policies define how errors are reported to the user.
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>REPORT policies are types that will be given as template argument to the safe_float
+            type to be used to report errors to the user via a single function <code class="computeroutput">report_failure</code>.
+          </p></li></ul></div>
+<span class="emphasis"><em>Requirements</em></span><div class="itemizedlist"><ul class="itemizedlist" type="disc">
+<li class="listitem">R is a type meeting the requirements of a <span class="bold"><strong>REPORT</strong></span>.</li>
+<li class="listitem">report is a value of type R.</li>
+<li class="listitem">e is a value of type <code class="computeroutput">std::string</code>.</li>
+</ul></div>
+<div class="table">
+<a name="idm244"></a><p class="title"><b>Table&#160;1.2.&#160;Valid expressions</b></p>
+<div class="table-contents"><table class="table" summary="Valid expressions">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>Expression</th>
+<th>Type</th>
+<th>Required</th>
+<th>Semantics</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code class="computeroutput">R{};</code></td>
+<td>&#160;</td>
+<td>required</td>
+<td>Default constructor</td>
+</tr>
+<tr>
+<td><code class="computeroutput">report.report_failure(e)</code></td>
+<td><code class="computeroutput">void</code></td>
+<td>required</td>
+<td>Called when an error is detected with a <code class="computeroutput">std::string</code> given as parameter that
+              represents the error.</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><span class="emphasis"><em>Example</em></span><pre class="programlisting">
+struct Report {
+    // Example of a valid REPORT policy that would throw exceptions on error
+
+    // Default constructible
+
+    bool report_failure(std::string const&amp; e) {
+        throw std::runtime_error(e);
+    }
+};</pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="idm270"></a>CAST</h3></div></div></div>
+<p>CAST policies define which types the safe_float is allowed to convert to/from
+      </p>
+<p>A <span class="bold"><strong>CAST</strong></span> is a type template that is templatized by <span class="emphasis"><em>the safe_float type</em></span></p>
+<div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>CAST policies receive a template parameter that is the type of the final safe_float (with every template parameter).
+            They are used to allow conversion to or from other types with templated bool values and provide
+            a conversion function that is used to perform the actual cast when allowed.
+          </p></li></ul></div>
+<span class="emphasis"><em>Requirements</em></span><div class="itemizedlist"><ul class="itemizedlist" type="disc">
+<li class="listitem">C is a type template meeting the requirements of a <span class="bold"><strong>CAST</strong></span>.</li>
+<li class="listitem">FP is a that such that <code class="computeroutput">std::is_floating_point&lt;FP&gt;::value == true</code>.</li>
+<li class="listitem">Check is a type template meeting the requirements of a <span class="bold"><strong>CHECK</strong></span>.</li>
+<li class="listitem">Report is a type meeting the requirements of a <span class="bold"><strong>REPORT</strong></span>.</li>
+<li class="listitem">f is a value of type FP.</li>
+<li class="listitem">T is some type.</li>
+<li class="listitem">t is a value of type T.</li>
+</ul></div>
+<div class="table">
+<a name="idm292"></a><p class="title"><b>Table&#160;1.3.&#160;Valid expressions</b></p>
+<div class="table-contents"><table class="table" summary="Valid expressions">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>Expression</th>
+<th>Type</th>
+<th>Required</th>
+<th>Semantics</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code class="computeroutput">C&lt;safe_float&lt;FP, Check, Report, C&gt;&gt;::can_cast_from&lt;T&gt;</code></td>
+<td><code class="computeroutput">bool</code></td>
+<td>required</td>
+<td>Used to determine whether a <code class="computeroutput">safe_float&lt;FP, Check, Report, C&gt;</code> can be implicitly
+                constructed from a T (See can_explicitly_cast_from to allow only explicit construction).
+                The value must be <code class="computeroutput">constexpr</code>.</td>
+</tr>
+<tr>
+<td><code class="computeroutput">C&lt;safe_float&lt;FP, Check, Report, C&gt;&gt;::can_explicitly_cast_from&lt;T&gt;</code></td>
+<td><code class="computeroutput">bool</code></td>
+<td>required</td>
+<td>Used to determine whether a <code class="computeroutput">safe_float&lt;FP, Check, Report, C&gt;</code> can be explicitly
+                constructed from a T (See can_cast_from to allow implicit construction).
+                The value must be <code class="computeroutput">constexpr</code>.</td>
+</tr>
+<tr>
+<td><code class="computeroutput">C&lt;safe_float&lt;FP, Check, Report, C&gt;&gt;::cast_from(f, t)</code></td>
+<td><code class="computeroutput">void</code></td>
+<td>required</td>
+<td>Called by the constructor converting from T to safe_float&lt;FP, Check, Report, C&gt; to perform
+              the conversion. The first parameter is a reference to the wrapped value inside the safe_float, the second parameter
+              is the value given as parameter to the constructor. This method is used by both implicit and explicit constructors.
+              This function only needs to exists for T such that either can_cast_from or can_explicitly_cast_from is true.</td>
+</tr>
+<tr>
+<td><code class="computeroutput">C&lt;safe_float&lt;FP, Check, Report, C&gt;&gt;::can_cast_to&lt;T&gt;</code></td>
+<td><code class="computeroutput">bool</code></td>
+<td>required</td>
+<td>Used to determine whether a <code class="computeroutput">safe_float&lt;FP, Check, Report, C&gt;</code> can be implicitly
+                converted to a T (See can_explicitly_cast_to to allow only explicit conversion).
+                The value must be <code class="computeroutput">constexpr</code>.</td>
+</tr>
+<tr>
+<td><code class="computeroutput">C&lt;safe_float&lt;FP, Check, Report, C&gt;&gt;::can_explicitly_cast_to&lt;T&gt;</code></td>
+<td><code class="computeroutput">bool</code></td>
+<td>required</td>
+<td>Used to determine whether a <code class="computeroutput">safe_float&lt;FP, Check, Report, C&gt;</code> can be explicitly
+                converted to a T (See can_explicitly_cast_to to allow implicit conversion).
+                The value must be <code class="computeroutput">constexpr</code>.</td>
+</tr>
+<tr>
+<td><code class="computeroutput">C&lt;safe_float&lt;FP, Check, Report, C&gt;&gt;::cast_to&lt;T&gt;(f)</code></td>
+<td><code class="computeroutput">T</code></td>
+<td>required</td>
+<td>Called by the conversion operator from safe_float&lt;FP, Check, Report, C&gt; to T to perform
+                the conversion. The parameter is a the wrapped value inside the safe_float, the return value is the result of the conversion. 
+                This method is used by both implicit and explicit conversion operators.
+                This function only needs to exists for T such that either can_cast_to or can_explicitly_cast_to is true.</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><span class="emphasis"><em>Example</em></span><pre class="programlisting">
+template&lt;typename SF&gt;
+struct Cast {
+    // Example of a valid CAST policy that allow implicit construction from floating point numbers
+    // and explicit conversion to floating point numbers
+      
+    template&lt;typename T&gt;
+    static constexpr bool can_cast_from = std::is_floating_point&lt;T&gt;::value;
+      
+    template&lt;typename T&gt;
+    static constexpr bool can_explicitly_cast_from = false;
+    
+    template&lt;typename T&gt;
+    static void cast_from(SF::value_type&amp; f, T t) {
+        f = t; 
+    }
+      
+        
+    template&lt;typename T&gt;
+    static constexpr bool can_cast_to = false;
+        
+    template&lt;typename T&gt;
+    static constexpr bool can_explicitly_cast_to = std::is_floating_point&lt;T&gt;::value;
+        
+    template&lt;typename T&gt;
+    static T cast_to(SF::value_type f) {
+        return T{f};
+    }
+};</pre>
+<span class="emphasis"><em>Note</em></span><p>
+        <code class="computeroutput">can_explicitly_cast_from</code> (resp. <code class="computeroutput">can_explicitly_cast_to</code>) are to be interpreted as "can <span class="bold"><strong>only</strong></span>
+        be cast <span class="bold"><strong>explicit</strong></span> from (resp. to) type T. Whereas <code class="computeroutput">can_cast_from</code> (resp. <code class="computeroutput">can_cast_to</code>)
+        enables implicit and explicit cast from (resp. to) type T.
+        Both <code class="computeroutput">can_cast_from</code> and <code class="computeroutput">can_explicitly_cast_from</code> shouldn't be true for a given type T at the same time
+        as it would enable both explicit and implicit constructor in the safe_float type resulting in
+        a compilation error when trying to construct explicitly from type T. Same with <code class="computeroutput">can_cast_to</code> and <code class="computeroutput">can_explicitly_cast_to</code> in the reverse direction.
+      </p>
 </div>
 </div>
 <table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
 <td align="left"></td>
-<td align="right"><div class="copyright-footer">Copyright &#169; 2015-2018 Dami&#225;n Vicino<p><a href="http://www.boost.org/users/license.html" target="_top">BOOST
-      License</a></p>
+<td align="right"><div class="copyright-footer">Copyright &#169; 2015-2019 Dami&#225;n Vicino<p>
+        <a href="http://www.boost.org/users/license.html" target="_top">BOOST
+          License
+        </a>
+      </p>
 </div></td>
 </tr></table>
 <hr>

@@ -4,8 +4,8 @@
 <title>Types</title>
 <link rel="stylesheet" href="../boostbook.css" type="text/css">
 <meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
-<link rel="home" href="../index.html" title="Chapter&#160;1.&#160;safe_float">
-<link rel="up" href="../index.html" title="Chapter&#160;1.&#160;safe_float">
+<link rel="home" href="../index.html" title="Chapter&#160;1.&#160; safe_float">
+<link rel="up" href="../index.html" title="Chapter&#160;1.&#160; safe_float">
 <link rel="prev" href="concepts.html" title="Concepts">
 <link rel="next" href="rationale.html" title="Rationale">
 </head>
@@ -17,37 +17,42 @@
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
 <a name="safe_float.types"></a>Types</h2></div></div></div>
 <div class="toc"><dl>
-<dt><span class="section"><a href="types.html#idm260015734720">safe_float&lt;FP, REPORTING_CHECK&gt;</a></span></dt>
-<dt><span class="section"><a href="types.html#idm260015733376">Policy classes</a></span></dt>
+<dt><span class="section"><a href="types.html#idm368">safe_float&lt;FP, CHECK, REPORTER, CASTER&gt;</a></span></dt>
+<dt><span class="section"><a href="types.html#idm371">Policy classes</a></span></dt>
 </dl></div>
 <div class="section">
 <div class="titlepage"><div><div><h3 class="title">
-<a name="idm260015734720"></a>safe_float&lt;FP, REPORTING_CHECK&gt;</h3></div></div></div>
+<a name="idm368"></a>safe_float&lt;FP, CHECK, REPORTER, CASTER&gt;</h3></div></div></div>
 <p>This type is the safe_float core, it wraps a FP floating point
-      data type. Every operation over this datatype is checked and reported by 
-      using the REPORTING_CHECK policy. </p>
+        data type. Every operation over this datatype is checked using the CHECK policy
+        and reported by using the REPORTER policy.
+      </p>
 </div>
 <div class="section">
 <div class="titlepage"><div><div><h3 class="title">
-<a name="idm260015733376"></a>Policy classes</h3></div></div></div>
+<a name="idm371"></a>Policy classes</h3></div></div></div>
 <div class="toc"><dl>
-<dt><span class="section"><a href="types.html#idm260015732352">CHECK Policy classes</a></span></dt>
-<dt><span class="section"><a href="types.html#idm260015671904">Reporting classes</a></span></dt>
-<dt><span class="section"><a href="types.html#idm260015664064">Numeric Limits</a></span></dt>
-<dt><span class="section"><a href="types.html#idm260015658032">FENV_AVAILABLE constant</a></span></dt>
+<dt><span class="section"><a href="types.html#idm374">CHECK Policy classes</a></span></dt>
+<dt><span class="section"><a href="types.html#idm519">REPORT Policy classes</a></span></dt>
+<dt><span class="section"><a href="types.html#idm537">CAST Policy classes</a></span></dt>
+<dt><span class="section"><a href="types.html#idm795">Numeric Limits</a></span></dt>
+<dt><span class="section"><a href="types.html#idm809">FENV_AVAILABLE constant</a></span></dt>
 <dt><span class="section"><a href="types.html#safe_float.exceptionsafety">Exception safety</a></span></dt>
 </dl></div>
 <p>A long set of instances for each policy is provided with the
-      safe_float library.</p>
+        safe_float library.
+      </p>
 <div class="section">
 <div class="titlepage"><div><div><h4 class="title">
-<a name="idm260015732352"></a>CHECK Policy classes</h4></div></div></div>
+<a name="idm374"></a>CHECK Policy classes</h4></div></div></div>
 <p>CHECK policies are templates that define the conditions to be evaluated when
-        operating. The only parameter they require is the REPORTER class to do the notifications.</p>
+          operating. See CHECK Concept.
+        </p>
 <p>The table shows how the policies defined in the library interact
-        with each operation and danger.</p>
+          with each operation and danger.
+        </p>
 <div class="table">
-<a name="idm260015730656"></a><p class="title"><b>Table&#160;1.1.&#160;Table of CHECK policies</b></p>
+<a name="idm378"></a><p class="title"><b>Table&#160;1.4.&#160;Table of CHECK policies</b></p>
 <div class="table-contents"><table class="table" summary="Table of CHECK policies">
 <colgroup>
 <col>
@@ -114,15 +119,17 @@
 <td>Underflow</td>
 <td>Addition</td>
 <td>check_addition_underflow</td>
-<td> 2.2250738585072019e-308 +
-                -2.2250738585072014e-308</td>
+<td>2.2250738585072019e-308 +
+                  -2.2250738585072014e-308
+                </td>
 </tr>
 <tr>
 <td>Underflow</td>
 <td>Subtraction</td>
 <td>check_subtraction_underflow</td>
 <td>2.2250738585072019e-308 -
-                2.2250738585072014e-308</td>
+                  2.2250738585072014e-308
+                </td>
 </tr>
 <tr>
 <td>Underflow</td>
@@ -166,29 +173,19 @@
 <td>check_division_invalid_result</td>
 <td>infinity() / infinity()</td>
 </tr>
-<tr>
-<td>Cast to</td>
-<td>Assignment</td>
-<td>allow_cast_to&lt;T&gt;</td>
-<td>T x = sf;</td>
-</tr>
-<tr>
-<td>Cast from</td>
-<td>Assignment</td>
-<td>allow_cast_from&lt;T&gt;</td>
-<td>T x; sf = x;</td>
-</tr>
 </tbody>
 </table></div>
 </div>
 <br class="table-break"><p>The policies can be combined defining classes that inherit from
-        other policies. This requires some glue code in the case the policies
-        combined are not 100% orthogonal, this glue is implemented
-        boost::safe_float::policy::compose.</p>
+          other policies. This requires some glue code in the case the policies
+          combined are not 100% orthogonal, this glue is implemented
+          boost::safe_float::policy::compose_check.
+        </p>
 <p>The following is a table of convenient combined policies already
-        available in the library and their components.</p>
+          available in the library and their components.
+        </p>
 <div class="table">
-<a name="idm260015689184"></a><p class="title"><b>Table&#160;1.2.&#160;Table of CHECK composed policies</b></p>
+<a name="idm475"></a><p class="title"><b>Table&#160;1.5.&#160;Table of CHECK composed policies</b></p>
 <div class="table-contents"><table class="table" summary="Table of CHECK composed policies">
 <colgroup>
 <col>
@@ -243,82 +240,414 @@
 </table></div>
 </div>
 <br class="table-break"><p>For combining the Policies a composer function is used called
-        policy::compose, the function receives variadic template list of policies
-        and returns a new policy type.</p>
+          policy::compose_check, the function receives variadic template list of policies
+          and returns a new policy type. It is being used as such:
+          </p>
+<pre class="programlisting">
+template&lt;typename FP&gt;
+using new_policy = policy::compose_check&lt;FP, policy::check_overflow, /* arbitrary checks */&gt;;
+        
+safe_float&lt;float, new_policy&gt; sf;
+          </pre>
+<p>
+        </p>
 <p>The composed policy, will call sequentially each pre and post
-        condition on each policy and return false if any check returns false,
-        and true when every check returned true.</p>
+          condition on each policy and return false if any check returns false,
+          and true when every check returned true.
+        </p>
 <p>The composed policies listed in previous check are defined using
-        the policy::compose in the convenience header file.</p>
+          the policy::compose_check in the convenience header file.
+        </p>
 </div>
 <div class="section">
 <div class="titlepage"><div><div><h4 class="title">
-<a name="idm260015671904"></a>Reporting classes</h4></div></div></div>
-<p>Reporting classes are focus in how a validation failure is
-        notified to the user.</p>
+<a name="idm519"></a>REPORT Policy classes</h4></div></div></div>
+<p>REPORT policy classes are focused in how a validation failure is
+          notified to the user. See REPORT Concept.
+        </p>
 <p>Options available out of the box are:</p>
 <div class="itemizedlist"><ul class="itemizedlist" type="disc">
 <li class="listitem"><p>on_fail_throw : Throws a safe_float_exception when the
-            checks fail.</p></li>
+              checks fail.
+            </p></li>
 <li class="listitem"><p>on_fail_abort : Calls std::abort() when the check
-            fails.</p></li>
+              fails.
+            </p></li>
 <li class="listitem"><p>on_fail_assert : Inserts an assert for each condition, it
-            makes safe the debuging only.</p></li>
+              makes safe the debugging only.
+            </p></li>
 <li class="listitem"><p>on_fail_log : This logs each error into a stream that needs
-            to be declared and silently continues its execution.</p></li>
+              to be declared and silently continues its execution.
+            </p></li>
 <li class="listitem"><p>on_fail_cerr : This is a particular case of on_fail_log.
-            Here the log is output to stadard error.</p></li>
-<li class="listitem"><p>on_fail_unexpected (experimental) : This adds support to wrap 
-            safe_float into a Boost.Expected class, and return unexpected on check fail.</p></li>
+              Here the log is output to standard error.
+            </p></li>
+<li class="listitem"><p>on_fail_unexpected (experimental) : This adds support to wrap
+              safe_float into a Boost.Expected class, and return unexpected on check fail.
+            </p></li>
 </ul></div>
 <p>Extending the list of options is as easy as defining a class
-        with the method: static void report_failure(const std::string&amp; message);</p>
+          with the method: static void report_failure(const std::string&amp; message);
+        </p>
 </div>
 <div class="section">
 <div class="titlepage"><div><div><h4 class="title">
-<a name="idm260015664064"></a>Numeric Limits</h4></div></div></div>
-<p>In safe_float a new specialization of numeric_limits is defined
-        for each wrapped number. For most functions and constants the values
-        are obtained from the original number.</p>
-<p>The few methods/constants that are not aliased to the wrapped
-        type are listed below.</p>
+<a name="idm537"></a>CAST Policy classes</h4></div></div></div>
+<p>
+          CAST policy classes are used to allow cast from/to various other types. See CAST Concept.
+        </p>
+<p>Options provided by the library:</p>
 <div class="itemizedlist"><ul class="itemizedlist" type="disc">
-<li class="listitem"><p>is_exact is true if the wraped type is or if all operation
-              are checked for inexact results by the wrapper. Same applies to
-              round_style and round_error.</p></li>
-<li class="listitem"><p>has_quiet_NaN is true if the wraped type has quiet NaN and
-              no check is introduced by the wrapper to catch them.</p></li>
-<li class="listitem"><p>has_signaling_NaN is true if the wraped type has signaling
-              NaN and no check is introduced by the wrapper to catch
-              them.</p></li>
-<li class="listitem"><p>Functions returning a safe_float: min, max, lowest,
-              quit_NaN, signaling_NaN, epsilon, round_error, infinity,
-              denorm_min. They return the value returned by the wrapped type
-              wrapped by safe_float.</p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_from_primitive::none</code>
+              : Doesn't allow cast from any floating point primitive. Here and bellow "floating point primitive"
+              refers to types T such that <code class="computeroutput">std::is_floating_point&lt;T&gt;::value == true</code>.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_from_primitive::same</code>
+              : Allow implicit cast from the wrapped floating point primitive.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_from_primitive::same_explicit</code>
+              : Allow explicit cast from the wrapped floating point primitive.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_from_primitive::more_precise</code>
+              : Allow implicit cast from floating point primitive with a precision
+              greater or equals to the precision of the wrapped type. The precision measured is
+              <code class="computeroutput">std::numeric_limits&lt;FP&gt;::digits</code>
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_from_primitive::more_precise_explicit</code>
+              : Allow explicit cast from floating point primitive with a precision
+              greater or equals to the precision of the wrapped type. The precision measured is
+              <code class="computeroutput">std::numeric_limits&lt;FP&gt;::digits</code>
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_from_primitive::less_precise</code>
+              : Allow implicit cast from floating point primitive with a precision
+              smaller or equals to the precision of the wrapped type. The precision measured is
+              <code class="computeroutput">std::numeric_limits&lt;FP&gt;::digits</code>
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_from_primitive::less_precise_explicit</code>
+              : Allow explicit cast from floating point primitive with a precision
+              smaller or equals to the precision of the wrapped type. The precision measured is
+              <code class="computeroutput">std::numeric_limits&lt;FP&gt;::digits</code>
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_from_primitive::all</code>
+              : Allow implicit cast from every floating point primitive.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_from_primitive::all_explicit</code>
+              : Allow explicit cast from every floating point primitive.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">allow_cast_from&lt;T&gt;</code>
+              : Allow implicit cast from T. The wrapped floating point type must be
+              constructible from type T.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">allow_explicit_cast_from&lt;T&gt;</code>
+              : Allow explicit cast from T. The wrapped floating point type must be
+              constructible from type T.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_to_primitive::none</code>
+              : Doesn't allow cast to any floating point primitive.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_to_primitive::same</code>
+              : Allow implicit cast to the wrapped floating point primitive.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_to_primitive::same_explicit</code>
+              : Allow explicit cast to the wrapped floating point primitive.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_to_primitive::more_precise</code>
+              : Allow implicit cast to floating point primitive with a precision
+              greater or equals to the precision of the wrapped type. The precision measured is
+              <code class="computeroutput">std::numeric_limits&lt;FP&gt;::digits</code>
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_to_primitive::more_precise_explicit</code>
+              : Allow explicit cast to floating point primitive with a precision
+              greater or equals to the precision of the wrapped type. The precision measured is
+              <code class="computeroutput">std::numeric_limits&lt;FP&gt;::digits</code>
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_to_primitive::less_precise</code>
+              : Allow implicit cast to floating point primitive with a precision
+              smaller or equals to the precision of the wrapped type. The precision measured is
+              <code class="computeroutput">std::numeric_limits&lt;FP&gt;::digits</code>
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_to_primitive::less_precise_explicit</code>
+              : Allow explicit cast to floating point primitive with a precision
+              smaller or equals to the precision of the wrapped type. The precision measured is
+              <code class="computeroutput">std::numeric_limits&lt;FP&gt;::digits</code>
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_to_primitive::all</code>
+              : Allow implicit cast to every floating point primitive.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_to_primitive::all_explicit</code>
+              : Allow explicit cast to every floating point primitive.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">allow_cast_to&lt;T&gt;</code>
+              : Allow implicit cast to T. The wrapped floating point type must be
+              convertible to type T.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">allow_explicit_cast_to&lt;T&gt;</code>
+              : Allow explicit cast to T. The wrapped floating point type must be
+              convertible to type T.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_from_safe_policy::more_restrictive</code>
+              : Allow implicit cast from other <code class="computeroutput">safe_float</code> types whose check policy is
+              more restrictive than the one used for the current <code class="computeroutput">safe_float</code> (ie. the set of
+              checks done by the current <code class="computeroutput">safe_float</code> is a subset of the set of checks done
+              by the other <code class="computeroutput">safe_float</code>). This policy only takes into account the check policies and not the types
+              of the wrapped floating point involved.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_from_safe_policy::more_restrictive_explicit</code>
+              : Allow explicit cast from other <code class="computeroutput">safe_float</code> types whose check policy is
+              more restrictive than the one used for the current <code class="computeroutput">safe_float</code> (ie. the set of
+              checks done by the current <code class="computeroutput">safe_float</code> is a subset of the set of checks done
+              by the other <code class="computeroutput">safe_float</code>). This policy only takes into account the check policies and not the types
+              of the wrapped floating point involved.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_from_safe_policy::less_restrictive</code>
+              : Allow implicit cast from other <code class="computeroutput">safe_float</code> types whose check policy is
+              less restrictive than the one used for the current <code class="computeroutput">safe_float</code> (ie. the set of
+              checks done by the current <code class="computeroutput">safe_float</code> is a superset of the set of checks done
+              by the other <code class="computeroutput">safe_float</code>). This policy only takes into account the check policies and not the types
+              of the wrapped floating point involved.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_from_safe_policy::less_restrictive_explicit</code>
+              : Allow explicit cast from other <code class="computeroutput">safe_float</code> types whose check policy is
+              less restrictive than the one used for the current <code class="computeroutput">safe_float</code> (ie. the set of
+              checks done by the current <code class="computeroutput">safe_float</code> is a superset of the set of checks done
+              by the other <code class="computeroutput">safe_float</code>). This policy only takes into account the check policies and not the types
+              of the wrapped floating point involved.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_from_safe_policy::equivalent</code>
+              : Allow implicit cast from other <code class="computeroutput">safe_float</code> types whose check policy is
+              equivalent to the one used for the current <code class="computeroutput">safe_float</code> (ie. the set of
+              checks done by the current <code class="computeroutput">safe_float</code> is the same that the set of checks done
+              by the other <code class="computeroutput">safe_float</code>). This policy only takes into account the check policies and not the types
+              of the wrapped floating point involved. Equivalent policies are not always the same, composed policies with the same 
+              component but declared in a different order are not the same but are equivalent.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_from_safe_policy::equivalent_explicit</code>
+              : Allow explicit cast from other <code class="computeroutput">safe_float</code> types whose check policy is
+              equivalent to the one used for the current <code class="computeroutput">safe_float</code> (ie. the set of
+              checks done by the current <code class="computeroutput">safe_float</code> is the same that the set of checks done
+              by the other <code class="computeroutput">safe_float</code>). This policy only takes into account the check policies and not the types
+              of the wrapped floating point involved. Equivalent policies are not always the same, composed policies with the same
+              component but declared in a different order are not the same but are equivalent.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_from_safe_policy::all</code>
+              : Allow implicit cast from every other <code class="computeroutput">safe_float</code> types disregarding the check policies. 
+              This policy only takes into account the check policies and not the types
+              of the wrapped floating point involved.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_from_safe_policy::all_explicit</code>
+              : Allow explicit cast from every other <code class="computeroutput">safe_float</code> types disregarding the check policies.
+              This policy only takes into account the check policies and not the types
+              of the wrapped floating point involved.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_from_safe&lt;FLOAT_CAST, SF_CAST&gt;::policy</code>
+              : Allow implicit cast from other <code class="computeroutput">safe_float</code> types that fulfill two conditions. The wrapped floating point type of the other
+              <code class="computeroutput">safe_float</code> must be implicitly castable into the desired <code class="computeroutput">safe_float</code> using <code class="computeroutput">FLOAT_CAST</code> policy and the other
+              <code class="computeroutput">safe_float</code> itself must be implictly castable into the desired <code class="computeroutput">safe_float</code> using <code class="computeroutput">SF_CAST</code>. <code class="computeroutput">FLOAT_CAST</code> and
+              <code class="computeroutput">SF_CAST</code> are cast policies. Usually <code class="computeroutput">FLOAT_CAST</code> will be a policy of the <code class="computeroutput">cast_from_primitive::*</code> family and
+              <code class="computeroutput">SF_CAST</code> will be of the <code class="computeroutput">cast_from_safe_policy::*</code> family, this makes it possible to control from which <code class="computeroutput">safe_float</code>
+              we will allow cast depending of both the wrapped floating-point type and the check policies.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_from_safe_explicit&lt;FLOAT_CAST, SF_CAST&gt;::policy</code>
+              : Allow explicit cast from other <code class="computeroutput">safe_float</code> types that fulfill two conditions. The wrapped floating point type of the other
+              <code class="computeroutput">safe_float</code> must be implicitly or explicitly castable into the desired <code class="computeroutput">safe_float</code> using <code class="computeroutput">FLOAT_CAST</code> policy and the other
+              <code class="computeroutput">safe_float</code> itself must be implictly or explicitly castable into the desired <code class="computeroutput">safe_float</code> using <code class="computeroutput">SF_CAST</code>. <code class="computeroutput">FLOAT_CAST</code> and
+              <code class="computeroutput">SF_CAST</code> are cast policies. Usually <code class="computeroutput">FLOAT_CAST</code> will be a policy of the <code class="computeroutput">cast_from_primitive::*</code> family and
+              <code class="computeroutput">SF_CAST</code> will be of the <code class="computeroutput">cast_from_safe_policy::*</code> family, this makes it possible to control from which <code class="computeroutput">safe_float</code>
+              we will allow cast depending of both the wrapped floating-point type and the check policies.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_to_safe_policy::more_restrictive</code>
+              : Allow implicit cast to other <code class="computeroutput">safe_float</code> types whose check policy is
+              more restrictive than the one used for the current <code class="computeroutput">safe_float</code> (ie. the set of
+              checks done by the current <code class="computeroutput">safe_float</code> is a subset of the set of checks done
+              by the other <code class="computeroutput">safe_float</code>). This policy only takes into account the check policies and not the types
+              of the wrapped floating point involved.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_to_safe_policy::more_restrictive_explicit</code>
+              : Allow explicit cast to other <code class="computeroutput">safe_float</code> types whose check policy is
+              more restrictive than the one used for the current <code class="computeroutput">safe_float</code> (ie. the set of
+              checks done by the current <code class="computeroutput">safe_float</code> is a subset of the set of checks done
+              by the other <code class="computeroutput">safe_float</code>). This policy only takes into account the check policies and not the types
+              of the wrapped floating point involved.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_to_safe_policy::less_restrictive</code>
+              : Allow implicit cast to other <code class="computeroutput">safe_float</code> types whose check policy is
+              less restrictive than the one used for the current <code class="computeroutput">safe_float</code> (ie. the set of
+              checks done by the current <code class="computeroutput">safe_float</code> is a superset of the set of checks done
+              by the other <code class="computeroutput">safe_float</code>). This policy only takes into account the check policies and not the types
+              of the wrapped floating point involved.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_to_safe_policy::less_restrictive_explicit</code>
+              : Allow explicit cast to other <code class="computeroutput">safe_float</code> types whose check policy is
+              less restrictive than the one used for the current <code class="computeroutput">safe_float</code> (ie. the set of
+              checks done by the current <code class="computeroutput">safe_float</code> is a superset of the set of checks done
+              by the other <code class="computeroutput">safe_float</code>). This policy only takes into account the check policies and not the types
+              of the wrapped floating point involved.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_to_safe_policy::equivalent</code>
+              : Allow implicit cast to other <code class="computeroutput">safe_float</code> types whose check policy is
+              equivalent to the one used for the current <code class="computeroutput">safe_float</code> (ie. the set of
+              checks done by the current <code class="computeroutput">safe_float</code> is the same that the set of checks done
+              by the other <code class="computeroutput">safe_float</code>). This policy only takes into account the check policies and not the types
+              of the wrapped floating point involved. Equivalent policies are not always the same, composed policies with the same
+              component but declared in a different order are not the same but are equivalent.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_to_safe_policy::equivalent_explicit</code>
+              : Allow explicit cast to other <code class="computeroutput">safe_float</code> types whose check policy is
+              equivalent to the one used for the current <code class="computeroutput">safe_float</code> (ie. the set of
+              checks done by the current <code class="computeroutput">safe_float</code> is the same that the set of checks done
+              by the other <code class="computeroutput">safe_float</code>). This policy only takes into account the check policies and not the types
+              of the wrapped floating point involved. Equivalent policies are not always the same, composed policies with the same
+              component but declared in a different order are not the same but are equivalent.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_to_safe_policy::all</code>
+              : Allow implicit cast to every other <code class="computeroutput">safe_float</code> types disregarding the check policies.
+              This policy only takes into account the check policies and not the types
+              of the wrapped floating point involved.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_to_safe_policy::all_explicit</code>
+              : Allow explicit cast to every other <code class="computeroutput">safe_float</code> types disregarding the check policies.
+              This policy only takes into account the check policies and not the types
+              of the wrapped floating point involved.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_to_safe&lt;FLOAT_CAST, SF_CAST&gt;::policy</code>
+              : Allow implicit cast to other <code class="computeroutput">safe_float</code> types that fulfill two conditions. The wrapped floating point type of the other
+              <code class="computeroutput">safe_float</code> must be implicitly castable from the desired <code class="computeroutput">safe_float</code> using <code class="computeroutput">FLOAT_CAST</code> policy and the other
+              <code class="computeroutput">safe_float</code> itself must be implictly castable from the desired <code class="computeroutput">safe_float</code> using <code class="computeroutput">SF_CAST</code>. <code class="computeroutput">FLOAT_CAST</code> and
+              <code class="computeroutput">SF_CAST</code> are cast policies. Usually <code class="computeroutput">FLOAT_CAST</code> will be a policy of the <code class="computeroutput">cast_to_primitive::*</code> family and
+              <code class="computeroutput">SF_CAST</code> will be of the <code class="computeroutput">cast_to_safe_policy::*</code> family, this makes it possible to control to which <code class="computeroutput">safe_float</code>
+              we will allow cast depending of both the wrapped floating-point type and the check policies.
+            </p></li>
+<li class="listitem"><p>
+              <code class="computeroutput">cast_to_safe_explicit&lt;FLOAT_CAST, SF_CAST&gt;::policy</code>
+              : Allow explicit cast to other <code class="computeroutput">safe_float</code> types that fulfill two conditions. The wrapped floating point type of the other
+              <code class="computeroutput">safe_float</code> must be implicitly or explicitly castable from the desired <code class="computeroutput">safe_float</code> using <code class="computeroutput">FLOAT_CAST</code> policy and the other
+              <code class="computeroutput">safe_float</code> itself must be implictly or explicitly castable from the desired <code class="computeroutput">safe_float</code> using <code class="computeroutput">SF_CAST</code>. <code class="computeroutput">FLOAT_CAST</code> and
+              <code class="computeroutput">SF_CAST</code> are cast policies. Usually <code class="computeroutput">FLOAT_CAST</code> will be a policy of the <code class="computeroutput">cast_to_primitive::*</code> family and
+              <code class="computeroutput">SF_CAST</code> will be of the <code class="computeroutput">cast_to_safe_policy::*</code> family, this makes it possible to control from which <code class="computeroutput">safe_float</code>
+              we will allow cast depending of both the wrapped floating-point type and the check policies.
+            </p></li>
 </ul></div>
+<p>Cast policies can be composed using <code class="computeroutput">policy::compose_cast</code> :
+          </p>
+<pre class="programlisting">
+template&lt;typename T&gt;
+using allow_cast_to_from_int = policy::compose_cast&lt;policy::allow_cast_from&lt;int&gt;, policy::allow_cast_to&lt;int&gt;&gt;::policy&lt;T&gt;;
+            
+using sf = safe_float&lt;policy::check_all, policy::on_fail_throw, allow_cast_to_from_int&gt;;
+// sf can be cast from and to int</pre>
+<p>
+          A composed cast policy allow cast if any of its component does allow it.
+          If multiple component allow cast to/from a given type T, the function used to perform the cast is the function
+          of the first component that allow cast to/from type T.
+          If one or more component allow implicit cast to/from a given type T and one or more component allow explicit cast
+          to/from this type T, the composed policy will allow implicit cast to/from type T and will use the function of the first
+          component that allow implicit cast to/from T (for example fot the composed policy <code class="computeroutput">compose_cast&lt;policy1, policy2&gt;</code>,
+          with <code class="computeroutput">policy1</code> allowing explicit cast from T and <code class="computeroutput">policy2</code> allowing implicit cast from T, the construction will use
+          <code class="computeroutput">policy2::cast_from</code> function but if both <code class="computeroutput">policy1</code> and <code class="computeroutput">policy2</code> allow implicit cast from T, the construction will use
+          <code class="computeroutput">policy1::cast_from</code> function as it is the first)
+        </p>
 </div>
 <div class="section">
 <div class="titlepage"><div><div><h4 class="title">
-<a name="idm260015658032"></a>FENV_AVAILABLE constant</h4></div></div></div>
+<a name="idm795"></a>Numeric Limits</h4></div></div></div>
+<p>In safe_float a new specialization of numeric_limits is defined
+          for each wrapped number. For most functions and constants the values
+          are obtained from the original number.
+        </p>
+<p>The few methods/constants that are not aliased to the wrapped
+          type are listed below.
+        </p>
+<p>
+          </p>
+<div class="itemizedlist"><ul class="itemizedlist" type="disc">
+<li class="listitem"><p>is_exact is true if the wrapped type is or if all operation
+                are checked for inexact results by the wrapper. Same applies to
+                round_style and round_error.
+              </p></li>
+<li class="listitem"><p>has_quiet_NaN is true if the wrapped type has quiet NaN and
+                no check is introduced by the wrapper to catch them.
+              </p></li>
+<li class="listitem"><p>has_signaling_NaN is true if the wrapped type has signaling
+                NaN and no check is introduced by the wrapper to catch
+                them.
+              </p></li>
+<li class="listitem"><p>Functions returning a safe_float: min, max, lowest,
+                quit_NaN, signaling_NaN, epsilon, round_error, infinity,
+                denorm_min. They return the value returned by the wrapped type
+                wrapped by safe_float.
+              </p></li>
+</ul></div>
+<p>
+        </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="idm809"></a>FENV_AVAILABLE constant</h4></div></div></div>
 <p>Each CHECK policy is implemented using fenv functions and
-        without using fenv functions. The selection of which implementation is
-        compiled is selected by the FENV_AVAILABLE constant. This constant is
-        passed to the compiler automaticly by the b2 script if the pragma to
-        make them safe is available. This convenient detection was not 
-        implemented in cmake scripts yet.</p>
+          without using fenv functions. The selection of which implementation is
+          compiled is selected by the FENV_AVAILABLE constant. This constant is
+          passed to the compiler automatically by the b2 script if the pragma to
+          make them safe is available. This convenient detection was not
+          implemented in cmake scripts yet.
+        </p>
 </div>
 <div class="section">
 <div class="titlepage"><div><div><h4 class="title">
 <a name="safe_float.exceptionsafety"></a>Exception safety</h4></div></div></div>
 <p>This library covers Strong Guarantee for every type, including the
-	    policies. </p>
+          policies.
+        </p>
 </div>
 </div>
 </div>
 <table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
 <td align="left"></td>
-<td align="right"><div class="copyright-footer">Copyright &#169; 2015-2018 Dami&#225;n Vicino<p><a href="http://www.boost.org/users/license.html" target="_top">BOOST
-      License</a></p>
+<td align="right"><div class="copyright-footer">Copyright &#169; 2015-2019 Dami&#225;n Vicino<p>
+        <a href="http://www.boost.org/users/license.html" target="_top">BOOST
+          License
+        </a>
+      </p>
 </div></td>
 </tr></table>
 <hr>

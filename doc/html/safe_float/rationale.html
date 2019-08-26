@@ -4,8 +4,8 @@
 <title>Rationale</title>
 <link rel="stylesheet" href="../boostbook.css" type="text/css">
 <meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
-<link rel="home" href="../index.html" title="Chapter&#160;1.&#160;safe_float">
-<link rel="up" href="../index.html" title="Chapter&#160;1.&#160;safe_float">
+<link rel="home" href="../index.html" title="Chapter&#160;1.&#160; safe_float">
+<link rel="up" href="../index.html" title="Chapter&#160;1.&#160; safe_float">
 <link rel="prev" href="types.html" title="Types">
 <link rel="next" href="changelog.html" title="Change Log">
 </head>
@@ -17,8 +17,9 @@
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
 <a name="safe_float.rationale"></a>Rationale</h2></div></div></div>
 <div class="qandaset">
-<a name="idm260015654288"></a><dl><dt>1. <a href="rationale.html#idm260015654032">Why to implement composer for policy in place of using variadic
-          templates.</a>
+<a name="idm817"></a><dl><dt>1. <a href="rationale.html#idm818">Why to implement composer for policy in place of using variadic
+            templates.
+          </a>
 </dt></dl>
 <table border="0" width="100%" summary="Q and A Set">
 <col align="left" width="1%">
@@ -26,71 +27,92 @@
 <tbody>
 <tr class="question">
 <td align="left" valign="top">
-<a name="idm260015654032"></a><a name="idm260015653776"></a><p><b>1.</b></p>
+<a name="idm818"></a><a name="idm819"></a><p><b>1.</b></p>
 </td>
 <td align="left" valign="top"><p>Why to implement composer for policy in place of using variadic
-          templates.</p></td>
+            templates.
+          </p></td>
 </tr>
 <tr class="answer">
 <td align="left" valign="top"></td>
 <td align="left" valign="top"><p>Policies can be complex and reusable. We want to allow users to define
-          them using the using keyword for that purpose. Composer allows easily to do that.</p></td>
+            them using the using keyword for that purpose. Composer allows easily to do that.
+          </p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="qandaset">
-<a name="idm260015651808"></a><dl>
+<a name="idm823"></a><dl>
 <dt></dt>
-<dd><dl><dt>1.1. <a href="rationale.html#idm260015651296">Why not all policies derive from same class?</a>
+<dd><dl><dt>1.1. <a href="rationale.html#idm825">Why not all policies derive from same class?</a>
 </dt></dl></dd>
 </dl>
 <table border="0" width="100%" summary="Q and A Set">
 <col align="left" width="1%">
 <col>
 <tbody>
-<tr class="toc"><td align="left" valign="top" colspan="2"><dl><dt>1.1. <a href="rationale.html#idm260015651296">Why not all policies derive from same class?</a>
+<tr class="toc"><td align="left" valign="top" colspan="2"><dl><dt>1.1. <a href="rationale.html#idm825">Why not all policies derive from same class?</a>
 </dt></dl></td></tr>
 <tr class="question">
 <td align="left" valign="top">
-<a name="idm260015651296"></a><a name="idm260015651040"></a><p><b>1.1.</b></p>
+<a name="idm825"></a><a name="idm826"></a><p><b>1.1.</b></p>
 </td>
 <td align="left" valign="top"><p>Why not all policies derive from same class?</p></td>
 </tr>
 <tr class="answer">
 <td align="left" valign="top"></td>
-<td align="left" valign="top"><p>That generate problems with inheritance rules at the composer level making some 
-            methods be reported by compiler as hidden.</p></td>
+<td align="left" valign="top"><p>That generate problems with inheritance rules at the composer level making some
+              methods be reported by compiler as hidden.
+            </p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="qandaset">
-<a name="idm260015648976"></a><dl>
+<a name="idm830"></a><dl>
 <dt></dt>
-<dd><dl><dt>1.1. <a href="rationale.html#idm260015648464">What is the difference between safefloat and what I can get from e.g. the Intel compiler by enabling FPEs?</a>
+<dd><dl><dt>1.1. <a href="rationale.html#idm832">What is the difference between safefloat and what I can get from e.g. the Intel compiler by enabling
+              FPEs?
+            </a>
 </dt></dl></dd>
 </dl>
 <table border="0" width="100%" summary="Q and A Set">
 <col align="left" width="1%">
 <col>
 <tbody>
-<tr class="toc"><td align="left" valign="top" colspan="2"><dl><dt>1.1. <a href="rationale.html#idm260015648464">What is the difference between safefloat and what I can get from e.g. the Intel compiler by enabling FPEs?</a>
+<tr class="toc"><td align="left" valign="top" colspan="2"><dl><dt>1.1. <a href="rationale.html#idm832">What is the difference between safefloat and what I can get from e.g. the Intel compiler by enabling
+              FPEs?
+            </a>
 </dt></dl></td></tr>
 <tr class="question">
 <td align="left" valign="top">
-<a name="idm260015648464"></a><a name="idm260015648208"></a><p><b>1.1.</b></p>
+<a name="idm832"></a><a name="idm833"></a><p><b>1.1.</b></p>
 </td>
-<td align="left" valign="top"><p>What is the difference between safefloat and what I can get from e.g. the Intel compiler by enabling FPEs?</p></td>
+<td align="left" valign="top"><p>What is the difference between safefloat and what I can get from e.g. the Intel compiler by enabling
+              FPEs?
+            </p></td>
 </tr>
 <tr class="answer">
 <td align="left" valign="top"></td>
 <td align="left" valign="top">
-<p>In general, the main differences are Flexibility, customization of reporting, and multiplatform/compiler.</p>
+<p>In general, the main differences are Flexibility, customization of reporting, and
+              multiplatform/compiler.
+            </p>
 <div class="itemizedlist"><ul class="itemizedlist" type="disc">
-<li class="listitem">Flexibility: Safefloat adds more granular control than FPE. FPE affects every variable in the system the same, while safefloat can be used to enforce some checks for a subgroup of all the floating point variables in the program or library, and even set different checks for different variables.</li>
-<li class="listitem">Customization of reporting: Safefloat provides more options on how to react to failure. FPE will abort, while safefloat library provides different strategies to act when a check fails, it may be the case that you can expect a check to fail under certain conditions (exceptional behavior). An alternative would be to manually check flags after each operation, in place of doing that, safe float could throw an exception that can be handled properly. </li>
-<li class="listitem">Multiplatform/compiler: Safefloat is C++17 standard compliand and it should work in any compiler implementing that standard.</li>
+<li class="listitem">Flexibility: Safefloat adds more granular control than FPE. FPE affects every variable in the
+                system the same, while safefloat can be used to enforce some checks for a subgroup of all the floating
+                point variables in the program or library, and even set different checks for different variables.
+              </li>
+<li class="listitem">Customization of reporting: Safefloat provides more options on how to react to failure. FPE will
+                abort, while safefloat library provides different strategies to act when a check fails, it may be the
+                case that you can expect a check to fail under certain conditions (exceptional behavior). An alternative
+                would be to manually check flags after each operation, in place of doing that, safe float could throw an
+                exception that can be handled properly.
+              </li>
+<li class="listitem">Multiplatform/compiler: Safefloat is C++17 standard compliand and it should work in any compiler
+                implementing that standard.
+              </li>
 </ul></div>
 </td>
 </tr>
@@ -100,8 +122,11 @@
 </div>
 <table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
 <td align="left"></td>
-<td align="right"><div class="copyright-footer">Copyright &#169; 2015-2018 Dami&#225;n Vicino<p><a href="http://www.boost.org/users/license.html" target="_top">BOOST
-      License</a></p>
+<td align="right"><div class="copyright-footer">Copyright &#169; 2015-2019 Dami&#225;n Vicino<p>
+        <a href="http://www.boost.org/users/license.html" target="_top">BOOST
+          License
+        </a>
+      </p>
 </div></td>
 </tr></table>
 <hr>
